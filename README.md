@@ -1,5 +1,13 @@
 # Tan CLI
 
+A CLI for Tan.
+
+## Setup
+
+```sh
+cargo install --path .
+```
+
 ## Commands
 
 - .. (repl)
