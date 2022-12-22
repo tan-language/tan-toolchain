@@ -37,10 +37,12 @@ fn repl() -> anyhow::Result<()> {
         println!("No previous history.");
     }
 
+    println!("Tan, press CTRL-D to exit.");
+
     loop {
         // #TODO what would be a cool prompt?
         // #TODO try to use the legendary `READY` in some capacity.
-        let readline = rl.readline(">> ");
+        let readline = rl.readline("> ");
 
         match readline {
             Ok(line) => {
