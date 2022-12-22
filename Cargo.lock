@@ -355,6 +355,14 @@ dependencies = [
  "clap",
  "rustyline",
  "tan",
+ "tan_fmt",
+]
+
+[[package]]
+name = "tan_fmt"
+version = "0.1.0"
+dependencies = [
+ "tan",
 ]
 
 [[package]]

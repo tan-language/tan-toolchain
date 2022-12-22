@@ -1,6 +1,7 @@
 use clap::{Arg, ArgMatches, Command};
 use rustyline::{error::ReadlineError, Editor};
 use tan::{lexer::Lexer, parser::Parser};
+use tan_fmt::compact::format_compact;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -57,7 +58,7 @@ fn repl() -> anyhow::Result<()> {
                     continue;
                 };
 
-                println!("{expr:?}");
+                println!("{}", format_compact(expr.as_ref()));
             }
             Err(ReadlineError::Interrupted) => {
                 println!("CTRL-C");

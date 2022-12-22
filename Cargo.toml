@@ -7,7 +7,8 @@ edition = "2021"
 anyhow = "1"
 clap = "4"
 rustyline = "10"
-tan = { path="../tan" }
+tan = { path = "../tan" }
+tan_fmt = { path = "../tan_fmt" }
 
 [[bin]]
 name = "tan"

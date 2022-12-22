@@ -1,3 +1,8 @@
 #V2
 (+ 3 4)
 (write "hello world")
+(+ 2   33)
+(+ 2   33) (* 2 33 1)
+#(doc "a nice comment") (+ 2 34) (* (+ 2 3) (* 56 12))
+#(doc "a nice comment") (+ 2 34) (* (+ 2 3) (* 56 12)
+#(doc "a nice comment") (+ 2 34) (* (+ 2 3) (* 56 12))

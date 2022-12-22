@@ -18,3 +18,12 @@ cargo install --path .
 - pkg
 - version
 - help
+
+## TODO
+
+### REPL
+
+- find better name, e.g. `shell`?
+- extract to separate crate
+- autocomplete
+- syntax high-lighting
