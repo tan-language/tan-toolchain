@@ -1,6 +1,10 @@
 use clap::{Arg, ArgMatches, Command};
 use rustyline::{error::ReadlineError, Editor};
-use tan::{lexer::Lexer, parser::Parser};
+use tan::{
+    eval::{eval, Env},
+    lexer::Lexer,
+    parser::Parser,
+};
 use tan_fmt::compact::format_compact;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -43,22 +47,31 @@ fn repl() -> anyhow::Result<()> {
                 rl.add_history_entry(line.as_str());
 
                 let mut lexer = Lexer::new(&line);
-                let tokens = lexer.lex();
+                let result = lexer.lex();
 
-                let Ok(tokens) = tokens else {
-                    println!("Parse error: {}", tokens.unwrap_err());
+                let Ok(tokens) = result else {
+                    println!("Parse error: {}", result.unwrap_err());
                     continue;
                 };
 
                 let mut parser = Parser::new(tokens);
-                let expr = parser.parse();
+                let result = parser.parse();
 
-                let Ok(expr) = expr else {
-                    println!("Parse error: {}", expr.unwrap_err());
+                let Ok(expr) = result else {
+                    println!("Parse error: {}", result.unwrap_err());
                     continue;
                 };
 
-                println!("{}", format_compact(expr.as_ref()));
+                // println!("{}", format_compact(expr.as_ref()));
+
+                let result = eval(expr.as_ref(), &mut Env {});
+
+                let Ok(value) = result else {
+                    println!("Eval error: {}", result.unwrap_err());
+                    continue;
+                };
+
+                println!("{}", format_compact(&value));
             }
             Err(ReadlineError::Interrupted) => {
                 println!("CTRL-C");
@@ -75,6 +88,7 @@ fn repl() -> anyhow::Result<()> {
         }
     }
 
+    // #TODO find a good name for the history file, probably should be hidden, i.e. start with `.` prefix, e.g. `.tan_history.txt`
     rl.save_history("history.txt").unwrap();
 
     Ok(())

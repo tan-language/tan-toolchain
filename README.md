@@ -23,6 +23,7 @@ cargo install --path .
 
 ### REPL
 
+- allow multi-line entry
 - find better name, e.g. `shell`?
 - extract to separate crate
 - autocomplete
