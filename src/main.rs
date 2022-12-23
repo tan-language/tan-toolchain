@@ -1,7 +1,7 @@
 use clap::{Arg, ArgMatches, Command};
 use rustyline::{error::ReadlineError, Editor};
 use tan::{
-    eval::{eval, Env},
+    eval::{env::Env, eval},
     lexer::Lexer,
     parser::Parser,
 };
@@ -66,7 +66,7 @@ fn repl() -> anyhow::Result<()> {
 
                 // println!("{}", format_compact(expr.as_ref()));
 
-                let result = eval(expr.as_ref(), &mut Env {});
+                let result = eval(expr.as_ref(), &mut Env::default());
 
                 let Ok(value) = result else {
                     println!("Eval error: {}", result.unwrap_err());
