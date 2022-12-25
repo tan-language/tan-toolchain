@@ -10,6 +10,8 @@ use tan_fmt::compact::format_compact;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
+const HISTORY_FILENAME: &str = ".tan_history.txt";
+
 // #TODO properly implement this.
 fn run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = run_matches
@@ -31,10 +33,11 @@ fn run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
 // #TODO rename to `shell` or something else?
 fn repl() -> anyhow::Result<()> {
+    // #TODO support completer!
     // `()` can be used when no completer is required
     let mut rl = Editor::<()>::new()?;
 
-    if rl.load_history("history.txt").is_err() {
+    if rl.load_history(HISTORY_FILENAME).is_err() {
         println!("No previous history.");
     }
 
@@ -89,8 +92,7 @@ fn repl() -> anyhow::Result<()> {
         }
     }
 
-    // #TODO find a good name for the history file, probably should be hidden, i.e. start with `.` prefix, e.g. `.tan_history.txt`
-    rl.save_history("history.txt").unwrap();
+    rl.save_history(HISTORY_FILENAME).unwrap();
 
     Ok(())
 }
