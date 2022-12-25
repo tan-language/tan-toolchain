@@ -1,2 +1,2 @@
 ; Example input
-(+ 2 33)
+(write (+ 2 33))

@@ -3,6 +3,7 @@ use rustyline::{error::ReadlineError, Editor};
 use tan::util::format::format_pretty_error;
 use tan::{
     eval::{env::Env, eval},
+    expr::Expr,
     lexer::Lexer,
     parser::Parser,
 };
@@ -12,6 +13,33 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
+pub fn eval_string(input: &str) -> Option<Expr> {
+    let mut lexer = Lexer::new(input);
+    let result = lexer.lex();
+
+    let Ok(tokens) = result else {
+        eprintln!("{}", format_pretty_error(&result.unwrap_err(), input, None));
+        return None;
+    };
+
+    let mut parser = Parser::new(tokens);
+    let result = parser.parse();
+
+    let Ok(expr) = result else {
+        eprintln!("{}", format_pretty_error(&result.unwrap_err(), input, None));
+        return None;
+    };
+
+    let result = eval(expr, &mut Env::default());
+
+    let Ok(value) = result else {
+        eprintln!("error: {}", result.unwrap_err());
+        return None;
+    };
+
+    Some(value)
+}
+
 // #TODO properly implement this.
 fn run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = run_matches
@@ -20,13 +48,7 @@ fn run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let input = std::fs::read_to_string(path).expect("cannot read input");
 
-    let mut lexer = Lexer::new(&input);
-    let tokens = lexer.lex().expect("cannot lex");
-    dbg!(&tokens);
-
-    let mut parser = Parser::new(tokens);
-    let expr = parser.parse();
-    dbg!(&expr);
+    eval_string(&input);
 
     Ok(())
 }
@@ -52,30 +74,10 @@ fn repl() -> anyhow::Result<()> {
             Ok(line) => {
                 rl.add_history_entry(line.as_str());
 
-                let mut lexer = Lexer::new(&line);
-                let result = lexer.lex();
-
-                let Ok(tokens) = result else {
-                    eprintln!("{}", format_pretty_error(&result.unwrap_err(), &line, None));
-                    continue;
-                };
-
-                let mut parser = Parser::new(tokens);
-                let result = parser.parse();
-
-                let Ok(expr) = result else {
-                    eprintln!("{}", format_pretty_error(&result.unwrap_err(), &line, None));
-                    continue;
-                };
-
-                let result = eval(expr, &mut Env::default());
-
-                let Ok(value) = result else {
-                    println!("Eval error: {}", result.unwrap_err());
-                    continue;
-                };
-
-                println!("{}", format_compact(&value));
+                if let Some(value) = eval_string(&line) {
+                    // #TODO leading `\n` is a workaround for `write` limitation.
+                    println!("\n{}", format_compact(&value));
+                }
             }
             Err(ReadlineError::Interrupted) => {
                 println!("CTRL-C");
