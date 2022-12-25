@@ -75,8 +75,7 @@ fn repl() -> anyhow::Result<()> {
                 rl.add_history_entry(line.as_str());
 
                 if let Some(value) = eval_string(&line) {
-                    // #TODO leading `\n` is a workaround for `write` limitation.
-                    println!("\n{}", format_compact(&value));
+                    println!("{}", format_compact(&value));
                 }
             }
             Err(ReadlineError::Interrupted) => {
