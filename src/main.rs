@@ -1,5 +1,6 @@
 use clap::{Arg, ArgMatches, Command};
 use rustyline::{error::ReadlineError, Editor};
+use tan::util::format::format_pretty_error;
 use tan::{
     eval::{env::Env, eval},
     lexer::Lexer,
@@ -52,7 +53,7 @@ fn repl() -> anyhow::Result<()> {
                 let result = lexer.lex();
 
                 let Ok(tokens) = result else {
-                    println!("Parse error: {}", result.unwrap_err());
+                    eprintln!("{}", format_pretty_error(&result.unwrap_err(), &line, None));
                     continue;
                 };
 
@@ -60,13 +61,11 @@ fn repl() -> anyhow::Result<()> {
                 let result = parser.parse();
 
                 let Ok(expr) = result else {
-                    println!("Parse error: {}", result.unwrap_err());
+                    eprintln!("{}", format_pretty_error(&result.unwrap_err(), &line, None));
                     continue;
                 };
 
-                // println!("{}", format_compact(expr.as_ref()));
-
-                let result = eval(expr.as_ref(), &mut Env::default());
+                let result = eval(expr, &mut Env::default());
 
                 let Ok(value) = result else {
                     println!("Eval error: {}", result.unwrap_err());

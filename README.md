@@ -23,6 +23,7 @@ cargo install --path .
 
 ### REPL
 
+- show detailed error (use pretty error formatter)
 - allow to skip top-level parens
 - allow multi-line entry
 - find better name, e.g. `shell`?
