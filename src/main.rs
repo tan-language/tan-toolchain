@@ -68,18 +68,29 @@ fn repl() -> anyhow::Result<()> {
 
     let mut env = Env::default();
 
+    let mut index = 0;
+
     loop {
         // #TODO what would be a cool prompt?
+        // #TODO have prefix for output/result also.
         // #TODO try to use the legendary `READY` in some capacity.
-        let readline = rl.readline("> ");
+        let readline = rl.readline(&format!("{index}> "));
 
         match readline {
             Ok(line) => {
-                rl.add_history_entry(line.as_str());
+                rl.add_history_entry(&line);
 
-                if let Some(value) = eval_string(&line, &mut env) {
-                    println!("{}", format_compact(&value));
-                }
+                // #TODO find better input variable name.
+                env.insert(format!("$i{index}"), Expr::String(line.clone()));
+
+                let Some(value) = eval_string(&line, &mut env) else {
+                    continue;
+                };
+
+                // #TODO find better output variable name.
+                env.insert(format!("$o{index}"), value.clone());
+
+                println!("{}", format_compact(&value));
             }
             Err(ReadlineError::Interrupted) => {
                 println!("CTRL-C");
@@ -94,6 +105,8 @@ fn repl() -> anyhow::Result<()> {
                 break;
             }
         }
+
+        index += 1;
     }
 
     rl.save_history(HISTORY_FILENAME).unwrap();
