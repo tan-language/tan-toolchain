@@ -13,7 +13,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
-pub fn eval_string(input: &str) -> Option<Expr> {
+pub fn eval_string(input: &str, env: &mut Env) -> Option<Expr> {
     let mut lexer = Lexer::new(input);
     let result = lexer.lex();
 
@@ -30,7 +30,7 @@ pub fn eval_string(input: &str) -> Option<Expr> {
         return None;
     };
 
-    let result = eval(expr, &mut Env::default());
+    let result = eval(expr, env);
 
     let Ok(value) = result else {
         eprintln!("error: {}", result.unwrap_err());
@@ -48,7 +48,8 @@ fn run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let input = std::fs::read_to_string(path).expect("cannot read input");
 
-    eval_string(&input);
+    let mut env = Env::default();
+    eval_string(&input, &mut env);
 
     Ok(())
 }
@@ -65,6 +66,8 @@ fn repl() -> anyhow::Result<()> {
 
     println!("Tan, press CTRL-D to exit.");
 
+    let mut env = Env::default();
+
     loop {
         // #TODO what would be a cool prompt?
         // #TODO try to use the legendary `READY` in some capacity.
@@ -74,7 +77,7 @@ fn repl() -> anyhow::Result<()> {
             Ok(line) => {
                 rl.add_history_entry(line.as_str());
 
-                if let Some(value) = eval_string(&line) {
+                if let Some(value) = eval_string(&line, &mut env) {
                     println!("{}", format_compact(&value));
                 }
             }
