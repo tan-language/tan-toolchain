@@ -1,5 +1,6 @@
 use clap::{Arg, ArgMatches, Command};
 use rustyline::{error::ReadlineError, Editor};
+use tan::eval::prelude::setup_prelude;
 use tan::util::format::format_pretty_error;
 use tan::{
     eval::{env::Env, eval},
@@ -48,7 +49,8 @@ fn run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let input = std::fs::read_to_string(path).expect("cannot read input");
 
-    let mut env = Env::default();
+    let mut env = setup_prelude(Env::default());
+
     eval_string(&input, &mut env);
 
     Ok(())
@@ -66,7 +68,7 @@ fn repl() -> anyhow::Result<()> {
 
     println!("Tan, press CTRL-D to exit.");
 
-    let mut env = Env::default();
+    let mut env = setup_prelude(Env::default());
 
     let mut index = 0;
 
