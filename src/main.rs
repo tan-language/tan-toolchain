@@ -8,7 +8,6 @@ use tan::{
     lexer::Lexer,
     parser::Parser,
 };
-use tan_fmt::compact::format_compact;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -73,7 +72,7 @@ fn repl() -> anyhow::Result<()> {
     let mut index = 0;
 
     loop {
-        // #TODO what would be a cool prompt?
+        // #TODO what would be a cool prompt? (Wolfram Language has an interesting prompt).
         // #TODO have prefix for output/result also.
         // #TODO try to use the legendary `READY` in some capacity.
         let readline = rl.readline(&format!("{index}> "));
@@ -92,7 +91,7 @@ fn repl() -> anyhow::Result<()> {
                 // #TODO find better output variable name.
                 env.insert(format!("$o{index}"), value.clone());
 
-                println!("{}", format_compact(&value));
+                println!("{value}");
             }
             Err(ReadlineError::Interrupted) => {
                 println!("CTRL-C");
