@@ -1,13 +1,13 @@
 use clap::{Arg, ArgMatches, Command};
 use rustyline::{error::ReadlineError, Editor};
 use tan::eval::prelude::setup_prelude;
-use tan::util::format::format_pretty_error;
 use tan::{
     eval::{env::Env, eval},
     expr::Expr,
     lexer::Lexer,
     parser::Parser,
 };
+use tan_fmt::format_error_pretty;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -18,7 +18,7 @@ pub fn eval_string(input: &str, env: &mut Env) -> Option<Expr> {
     let result = lexer.lex();
 
     let Ok(tokens) = result else {
-        eprintln!("{}", format_pretty_error(&result.unwrap_err(), input, None));
+        eprintln!("{}", format_error_pretty(&result.unwrap_err(), input, None));
         return None;
     };
 
@@ -26,7 +26,7 @@ pub fn eval_string(input: &str, env: &mut Env) -> Option<Expr> {
     let result = parser.parse();
 
     let Ok(expr) = result else {
-        eprintln!("{}", format_pretty_error(&result.unwrap_err(), input, None));
+        eprintln!("{}", format_error_pretty(&result.unwrap_err(), input, None));
         return None;
     };
 
