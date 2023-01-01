@@ -1,41 +1,37 @@
 # Tan CLI
 
-A CLI for Tan.
+A CLI for the Tan Language.
 
-## Setup
+## Status
 
-```sh
-cargo install --path .
-```
+This is an experimental project, not intended for production.
 
-## Commands
+## Contributing
 
-- .. (repl)
-- run
-- build
-- fmt
-- lint
-- pkg
-- version
-- help
+Pull requests, issues, and comments are welcome! Make sure to add tests for new features and bug fixes.
 
-## TODO
+## Contact
 
-### REPL
+For questions, suggestions, etc, you can reach the maintainer on [Twitter](https://twitter.com/gmosx).
 
-- custom prelude for RELP, with `help`, `config`, etc.
-- use custom unicode chars in the prompt, e.g. -> , <-
-- mark entries with indexes (0, 1, 2), allow refs, e.g. $0 $1, etc.
-  - use In and Out arrays/lists like Wolfram.
-- allow to skip top-level parens
-- allow multi-line entry
-- find better name, e.g. `shell`?
-- extract to separate crate
-- autocomplete
-- syntax high-lighting
+## License
 
-#### REPL Done
+The software is distributed under the terms of both the MIT license and the Apache License (Version 2.0). See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT) for details.
 
-- show detailed error (use pretty error formatter)
-- NO: quit the repl with `\q` (escape), similar to postgres. <-- No, just quit with (exit) or CTRL+D
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
 
+## Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+## Copyright
+
+Copyright © 2022 [George Moschovitis](https://gmosx.ninja).
