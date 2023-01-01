@@ -1,14 +1,19 @@
 [package]
 name = "tan_cli"
-version = "0.2.0"
+description = "The Tan CLI"
+version = "0.3.0"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/tanlang-org/tan_cli"
+keywords = ["tan", "language", "cli"]
+authors = ["George Moschovitis <gmosx@reizu.org>"]
 edition = "2021"
 
 [dependencies]
 anyhow = "1"
 clap = "4"
 rustyline = "10"
-tan = { path = "../tan" }
-tan_fmt = { path = "../tan_fmt" }
+tan = { path = "../tan", version = "0.3.0" }
+tan_fmt = { path = "../tan_fmt", version = "0.3.0" }
 
 [[bin]]
 name = "tan"
