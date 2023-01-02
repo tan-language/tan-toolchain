@@ -1,21 +1,22 @@
 use clap::ArgMatches;
+use once_cell::sync::Lazy;
 use regex::Regex;
 use tan::eval::{env::Env, prelude::setup_prelude};
 
 use crate::util::eval_string;
 
+pub static SHEBANG_RE: Lazy<Regex> = Lazy::new(|| Regex::new("^#!(.*)\n").unwrap());
+
 /// Skip the 'shebang' line, if it exists.
 fn skip_shebang(input: String) -> String {
     if input.starts_with("#!") {
-        // #TODO 'cache' with once_cell
-        let shebang_re = Regex::new("^#!(.*)\n").unwrap();
-        shebang_re.replace(&input, "").to_string()
+        SHEBANG_RE.replace(&input, "").to_string()
     } else {
         input
     }
 }
 
-// #TODO properly implement this.
+/// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = run_matches
         .get_one("PATH")
