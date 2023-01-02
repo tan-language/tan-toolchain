@@ -2,6 +2,12 @@
 
 A CLI for the Tan Language.
 
+## Install
+
+```sh
+cargo install --path .
+```
+
 ## Status
 
 This is an experimental project, not intended for production.

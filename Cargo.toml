@@ -11,6 +11,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1"
 clap = "4"
+regex = "1"
 rustyline = "10"
 tan = { path = "../tan", version = "0.3" }
 tan_fmt = { path = "../tan_fmt", version = "0.3" }
