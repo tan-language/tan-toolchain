@@ -35,6 +35,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 rl.add_history_entry(&line);
 
                 // #TODO find better input variable name.
+                // #TODO use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
                 env.insert(format!("$i{index}"), Expr::String(line.clone()));
 
                 let Some(value) = eval_string(&line, &mut env) else {
@@ -42,6 +43,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 };
 
                 // #TODO find better output variable name.
+                // #TODO use output list/array, like wolfram, e.g. (*out* 1)
                 env.insert(format!("$o{index}"), value.clone());
 
                 println!("{value}");

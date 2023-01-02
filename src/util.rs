@@ -6,6 +6,8 @@ use tan::{
 };
 use tan_fmt::format_error_pretty;
 
+// #TODO move to `tan` crate
+// #TODO handle errors externally to this function
 pub fn eval_string(input: &str, env: &mut Env) -> Option<Expr> {
     let mut lexer = Lexer::new(input);
     let result = lexer.lex();

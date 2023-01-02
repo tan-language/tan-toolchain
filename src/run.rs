@@ -5,6 +5,9 @@ use tan::eval::{env::Env, prelude::setup_prelude};
 
 use crate::util::eval_string;
 
+// #Insight
+// No need to handle shebang in the reader (lexer, parser).
+
 pub static SHEBANG_RE: Lazy<Regex> = Lazy::new(|| Regex::new("^#!(.*)\n").unwrap());
 
 /// Skip the 'shebang' line, if it exists.
