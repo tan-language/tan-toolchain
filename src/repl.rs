@@ -65,6 +65,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
         index += 1;
     }
 
+    // #TODO could we trap the (exit)?
     rl.save_history(HISTORY_FILENAME).unwrap();
 
     Ok(())

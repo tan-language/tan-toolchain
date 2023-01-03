@@ -10,6 +10,7 @@ use crate::util::eval_string;
 
 pub static SHEBANG_RE: Lazy<Regex> = Lazy::new(|| Regex::new("^#!(.*)\n").unwrap());
 
+// #TODO skip_shebang messes with the lexer ranges, FIX!
 /// Skip the 'shebang' line, if it exists.
 fn skip_shebang(input: String) -> String {
     if input.starts_with("#!") {
