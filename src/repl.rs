@@ -8,6 +8,8 @@ use crate::util::eval_string;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
+// #TODO if we use an array for %i and %o, we can apply all the Seq functions, potentially useful! but it's less ergonomic.
+
 // #TODO rename to `shell` or something else?
 pub fn handle_repl() -> anyhow::Result<()> {
     // #TODO support completer!
