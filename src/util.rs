@@ -28,7 +28,8 @@ pub fn eval_string(input: &str, env: &mut Env) -> Option<Expr> {
     let result = eval(expr, env);
 
     let Ok(value) = result else {
-        eprintln!("error: {}", result.unwrap_err());
+        // #TODO use format_error_pretty!
+        eprintln!("{}", result.unwrap_err());
         return None;
     };
 
