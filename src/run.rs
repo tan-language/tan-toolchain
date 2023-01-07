@@ -3,7 +3,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use tan::eval::{env::Env, prelude::setup_prelude};
 
-use crate::util::eval_string;
+use crate::util::eval_string_with_error_report;
 
 // #Insight
 // No need to handle shebang in the reader (lexer, parser).
@@ -32,7 +32,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let mut env = setup_prelude(Env::default());
 
-    eval_string(&input, &mut env);
+    eval_string_with_error_report(&input, &mut env);
 
     Ok(())
 }

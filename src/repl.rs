@@ -4,7 +4,7 @@ use tan::{
     expr::Expr,
 };
 
-use crate::util::eval_string;
+use crate::util::eval_string_with_error_report;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
@@ -40,7 +40,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 // #TODO use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
                 env.insert(format!("$i{index}"), Expr::String(line.clone()));
 
-                let Some(value) = eval_string(&line, &mut env) else {
+                let Some(value) = eval_string_with_error_report(&line, &mut env) else {
                     continue;
                 };
 
