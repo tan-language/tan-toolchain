@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use tan::eval::{env::Env, prelude::setup_prelude};
+use tan::eval::env::Env;
 
 use crate::util::eval_string_with_error_report;
 
@@ -30,7 +30,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let input = skip_shebang(input);
 
-    let mut env = setup_prelude(Env::default());
+    let mut env = Env::prelude();
 
     eval_string_with_error_report(&input, &mut env);
 

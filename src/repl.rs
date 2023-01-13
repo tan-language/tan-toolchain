@@ -1,8 +1,5 @@
 use rustyline::{error::ReadlineError, Editor};
-use tan::{
-    eval::{env::Env, prelude::setup_prelude},
-    expr::Expr,
-};
+use tan::{eval::env::Env, expr::Expr};
 
 use crate::util::eval_string_with_error_report;
 
@@ -22,7 +19,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
     println!("Tan, press CTRL-D to exit.");
 
-    let mut env = setup_prelude(Env::default());
+    let mut env = Env::prelude();
 
     let mut index = 0;
 
