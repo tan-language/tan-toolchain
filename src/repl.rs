@@ -1,3 +1,5 @@
+use std::io::{stdout, Write};
+
 use rustyline::{error::ReadlineError, Editor};
 use tan::{eval::env::Env, expr::Expr};
 
@@ -45,7 +47,12 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 // #TODO use output list/array, like wolfram, e.g. (*out* 1)
                 env.insert(format!("$o{index}"), value.clone());
 
-                println!("{value}");
+                match value {
+                    Expr::One => (),
+                    _ => println!("{value}"),
+                }
+
+                let _ = stdout().flush();
             }
             Err(ReadlineError::Interrupted) => {
                 println!("CTRL-C");
