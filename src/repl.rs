@@ -63,7 +63,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 break;
             }
             Err(err) => {
-                println!("Error: {:?}", err);
+                eprintln!("ERROR: {:?}", err);
                 break;
             }
         }

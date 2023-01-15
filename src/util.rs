@@ -7,7 +7,7 @@ pub fn eval_string_with_error_report(input: &str, env: &mut Env) -> Option<Expr>
     match result {
         Ok(expr) => Some(expr),
         Err(err) => {
-            eprintln!("{}", format_error_pretty(&err, input, None));
+            eprintln!("ERROR: {}", format_error_pretty(&err, input, None));
             None
         }
     }
