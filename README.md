@@ -10,7 +10,7 @@ cargo install --path .
 
 ## Status
 
-This is an experimental project, not intended for production.
+This is an experimental project, not intended for production use.
 
 ## Contributing
 
