@@ -1,3 +1,5 @@
+use std::fs;
+
 use clap::ArgMatches;
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -20,12 +22,7 @@ fn skip_shebang(input: String) -> String {
     }
 }
 
-/// Read and evaluate a Tan program file.
-pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
-    let path: &String = run_matches
-        .get_one("PATH")
-        .expect("missing path to program file");
-
+fn eval_file(path: &str) {
     let input = std::fs::read_to_string(path).expect("cannot read input");
 
     let input = skip_shebang(input);
@@ -33,6 +30,30 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let mut env = Env::prelude();
 
     eval_string_with_error_report(&input, &mut env);
+}
+
+/// Read and evaluate a Tan program file.
+pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
+    let path: &String = run_matches
+        .get_one("PATH")
+        .expect("missing path to program file");
+
+    if path.ends_with(".tan") {
+        eval_file(path);
+    } else {
+        // #TODO not working correctly yet, need to passes, first definitions, then eval.
+        let file_paths = fs::read_dir(path)?;
+
+        for file_path in file_paths {
+            let path = file_path?.path().display().to_string();
+
+            if !path.ends_with(".tan") {
+                continue;
+            }
+
+            eval_file(&path);
+        }
+    }
 
     Ok(())
 }
