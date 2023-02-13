@@ -3,7 +3,12 @@ use std::fs;
 use clap::ArgMatches;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use tan::eval::env::Env;
+use tan::{
+    ann::Ann,
+    api::resolve_string,
+    eval::{env::Env, eval},
+    expr::Expr,
+};
 
 use crate::util::eval_string_with_error_report;
 
@@ -32,6 +37,7 @@ fn eval_file(path: &str) {
     eval_string_with_error_report(&input, &mut env);
 }
 
+// #TODO try to reuse the code from "use".
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = run_matches
@@ -44,14 +50,41 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         // #TODO not working correctly yet, need to passes, first definitions, then eval.
         let file_paths = fs::read_dir(path)?;
 
-        for file_path in file_paths {
-            let path = file_path?.path().display().to_string();
+        let mut resolved_exprs: Vec<Ann<Expr>> = Vec::new();
 
-            if !path.ends_with(".tan") {
+        let mut env = Env::prelude();
+
+        for file_path in file_paths {
+            let path = file_path?.path();
+
+            if !path.display().to_string().ends_with(".tan") {
                 continue;
             }
 
-            eval_file(&path);
+            // #TODO handle the range of the error.
+            let input = std::fs::read_to_string(path)?;
+
+            let result = resolve_string(input, &mut env);
+
+            let Ok(mut exprs) = result else {
+                let err = result.unwrap_err();
+                // #TODO better error handling here!
+                dbg!(&err);
+                // #TODO maybe continue parsing/resolving to find more errors?
+                // #TODO better error here!
+                return Err(tan::error::Error::FailedUse.into());
+            };
+
+            resolved_exprs.append(&mut exprs);
+        }
+
+        for expr in resolved_exprs {
+            if let Err(err) = eval(&expr, &mut env) {
+                // #TODO better error handling here!
+                dbg!(&err);
+                // #TODO better error here!
+                return Err(tan::error::Error::FailedUse.into());
+            }
         }
     }
 
