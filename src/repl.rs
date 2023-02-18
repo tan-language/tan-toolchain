@@ -8,6 +8,8 @@ use crate::util::eval_string_with_error_report;
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
 // #TODO if we use an array for %i and %o, we can apply all the Seq functions, potentially useful! but it's less ergonomic.
+// #TODO don't advance the line-variable if the input is just a comment
+// #TODO `---` comments are convenient as separators.
 
 // #TODO rename to `shell` or something else?
 pub fn handle_repl() -> anyhow::Result<()> {
