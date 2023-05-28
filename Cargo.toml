@@ -13,9 +13,10 @@ anyhow = "1"
 clap = "4"
 regex = "1"
 once_cell = "1"
-rustyline = "10"
+rustyline = "11.0.0"
 tan = { path = "../tan", version = "0.5" }
 tan_fmt = { path = "../tan_fmt", version = "0.5" }
+tan_lint = { path = "../tan_lint", version = "0.5" }
 
 [[bin]]
 name = "tan"

@@ -1,6 +1,6 @@
 use std::io::{stdout, Write};
 
-use rustyline::{error::ReadlineError, Editor};
+use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{eval::env::Env, expr::Expr};
 
 use crate::util::eval_string_with_error_report;
@@ -14,8 +14,28 @@ const HISTORY_FILENAME: &str = ".tan_history.txt";
 // #TODO rename to `shell` or something else?
 pub fn handle_repl() -> anyhow::Result<()> {
     // #TODO support completer!
-    // `()` can be used when no completer is required
-    let mut rl = Editor::<()>::new()?;
+
+    // let config = Config::builder()
+    //     .history_ignore_space(true)
+    //     .completion_type(CompletionType::List)
+    //     .edit_mode(EditMode::Emacs)
+    //     .build();
+    // let h = MyHelper {
+    //     completer: FilenameCompleter::new(),
+    //     highlighter: MatchingBracketHighlighter::new(),
+    //     hinter: HistoryHinter {},
+    //     colored_prompt: "".to_owned(),
+    //     validator: MatchingBracketValidator::new(),
+    // };
+    // let mut rl = Editor::with_config(config)?;
+    // rl.set_helper(Some(h));
+    // rl.bind_sequence(KeyEvent::alt('n'), Cmd::HistorySearchForward);
+    // rl.bind_sequence(KeyEvent::alt('p'), Cmd::HistorySearchBackward);
+    // if rl.load_history("history.txt").is_err() {
+    //     println!("No previous history.");
+    // }
+
+    let mut rl = DefaultEditor::new()?;
 
     if rl.load_history(HISTORY_FILENAME).is_err() {
         println!("No previous history.");
@@ -35,7 +55,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
         match readline {
             Ok(line) => {
-                rl.add_history_entry(&line);
+                rl.add_history_entry(&line)?;
 
                 // #TODO find better input variable name.
                 // #TODO use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
