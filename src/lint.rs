@@ -1,5 +1,16 @@
 use clap::ArgMatches;
-use tan::api::parse_string_all;
+use tan_lint::{compute_diagnostics, Diagnostic, DiagnosticSeverity};
+
+fn format_diagnostic(diagnostic: &Diagnostic) -> String {
+    // #TODO improve the formatting.
+    format!(
+        "{:?} [line: {}, col: {}]: {}",
+        diagnostic.severity.unwrap_or(DiagnosticSeverity::WARNING),
+        diagnostic.range.start.line,
+        diagnostic.range.start.character,
+        diagnostic.message
+    )
+}
 
 pub fn handle_lint(lint_matches: &ArgMatches) -> anyhow::Result<()> {
     // #TODO extract and reuse handling of file or dir from other commands.
@@ -9,22 +20,12 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> anyhow::Result<()> {
         .expect("missing path to program file");
 
     let input = std::fs::read_to_string(path)?;
-    let _result = parse_string_all(&input);
 
-    // let diagnostics = match result {
-    //     Ok(exprs) => {
-    //         let mut diagnostics = Vec::new();
+    let diagnostics = compute_diagnostics(&input);
 
-    //         let mut lint = SnakeCaseNamesLint::new(&input);
-    //         lint.run(&exprs);
-    //         diagnostics.append(&mut lint.diagnostics);
-
-    //         diagnostics
-    //     }
-    //     Err(errors) => compute_parse_error_diagnostics(&input, errors)?,
-    // };
-
-    // Ok(diagnostics)
+    for diagnostic in diagnostics {
+        println!("{}", format_diagnostic(&diagnostic));
+    }
 
     Ok(())
 }
