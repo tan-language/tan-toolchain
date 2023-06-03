@@ -5,7 +5,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use tan::{
     ann::Ann,
-    api::resolve_string,
+    api::{has_tan_extension, resolve_string},
     eval::{env::Env, eval},
     expr::Expr,
 };
@@ -44,7 +44,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         .get_one("PATH")
         .expect("missing path to program file");
 
-    if path.ends_with(".tan") {
+    if has_tan_extension(path) {
         eval_file(path);
     } else {
         // #TODO not working correctly yet, need to passes, first definitions, then eval.

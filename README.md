@@ -8,6 +8,16 @@ A CLI for the Tan Language.
 cargo install --path .
 ```
 
+## Usage
+
+```sh
+tan run module-dir
+```
+
+```sh
+tan run file
+```
+
 ## Status
 
 This is an experimental project, not intended for production use.
