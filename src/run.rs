@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, path::Path};
 
 use clap::ArgMatches;
 use once_cell::sync::Lazy;
@@ -9,6 +9,7 @@ use tan::{
     eval::{env::Env, eval},
     expr::Expr,
 };
+use tracing::error;
 
 use crate::util::eval_string_with_error_report;
 
@@ -44,9 +45,16 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         .get_one("PATH")
         .expect("missing path to program file");
 
-    if has_tan_extension(path) {
+    let path2 = Path::new(path);
+
+    // #TODO also try to automatically add the .tan or emoji extension.
+
+    if !path2.exists() {
+        error!("Path `{path}` does not exist.");
+    } else if has_tan_extension(path) {
         eval_file(path);
-    } else {
+    } else if path2.is_dir() {
+        // #TODO report error if it's not a directory but a file with unsupported extension.
         // #TODO not working correctly yet, need to passes, first definitions, then eval.
         let file_paths = fs::read_dir(path)?;
 
@@ -86,6 +94,8 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
                 return Err(tan::error::Error::FailedUse.into());
             }
         }
+    } else {
+        error!("Path `{path}` is not a valid module, unrecognized extension.");
     }
 
     Ok(())

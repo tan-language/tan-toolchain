@@ -5,6 +5,7 @@ mod util;
 
 use clap::{Arg, Command};
 use lint::handle_lint;
+use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::repl::handle_repl;
 use crate::run::handle_run;
@@ -12,6 +13,13 @@ use crate::run::handle_run;
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt()
+        .with_writer(std::io::stderr)
+        .without_time()
+        .with_target(false)
+        .finish()
+        .init();
+
     // #TODO consider a different name? even though 'run' is generic enough.
     let run_cmd = Command::new("run").about("Run a Tan program").arg(
         Arg::new("PATH")
