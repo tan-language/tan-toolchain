@@ -7,9 +7,15 @@ pub fn eval_string_with_error_report(input: &str, env: &mut Env) -> Option<Expr>
     match result {
         Ok(Ann(expr, ..)) => Some(expr),
         Err(errors) => {
+            // #TODO extract this as a method.
+            let mut error_strings = Vec::new();
             for error in errors {
-                eprintln!("ERROR: {}", format_error_pretty(&error, input, None));
+                error_strings.push(format!(
+                    "ERROR: {}",
+                    format_error_pretty(&error, input, None)
+                ));
             }
+            eprintln!("{}", error_strings.join("\n\n"));
             None
         }
     }
