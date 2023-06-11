@@ -1,6 +1,7 @@
 use tan::{ann::Ann, api::eval_string, error::Error, eval::env::Env, expr::Expr, range::Ranged};
 use tan_fmt::format_error_pretty;
 
+#[allow(dead_code)]
 pub fn eval_string_with_error_report(input: &str, env: &mut Env) -> Option<Expr> {
     let result = eval_string(input, env);
 
