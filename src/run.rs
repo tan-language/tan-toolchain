@@ -98,6 +98,13 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         error!("Path `{path}` is not a valid module, unrecognized extension.");
     }
 
+    // let result = eval_module(path);
+    //
+    // if let Err(errors) = result {
+    //     // eprintln!("{}", format_errors(&input, &errors));
+    //     dbg!(errors);
+    // };
+
     Ok(())
 }
 
