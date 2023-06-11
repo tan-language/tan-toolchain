@@ -532,8 +532,6 @@ version = "0.5.1"
 dependencies = [
  "anyhow",
  "clap",
- "once_cell",
- "regex",
  "rustyline",
  "tan",
  "tan_fmt",

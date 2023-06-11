@@ -1,8 +1,6 @@
 use std::{fs, path::Path};
 
 use clap::ArgMatches;
-use once_cell::sync::Lazy;
-use regex::Regex;
 use tan::{
     ann::Ann,
     api::{has_tan_extension, resolve_string},
@@ -13,25 +11,8 @@ use tracing::error;
 
 use crate::util::eval_string_with_error_report;
 
-// #Insight
-// No need to handle shebang in the reader (lexer, parser).
-
-pub static SHEBANG_RE: Lazy<Regex> = Lazy::new(|| Regex::new("^#!(.*)\n").unwrap());
-
-// #TODO skip_shebang messes with the lexer ranges, FIX!
-/// Skip the 'shebang' line, if it exists.
-fn skip_shebang(input: String) -> String {
-    if input.starts_with("#!") {
-        SHEBANG_RE.replace(&input, "").to_string()
-    } else {
-        input
-    }
-}
-
 fn eval_file(path: &str) {
     let input = std::fs::read_to_string(path).expect("cannot read input");
-
-    let input = skip_shebang(input);
 
     let mut env = Env::prelude();
 
@@ -106,21 +87,4 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     // };
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::skip_shebang;
-
-    #[test]
-    fn skip_shebang_ignores_a_shebang_line() {
-        let input = "#!tan\n(let a 1)\n a".to_string();
-        assert_eq!(skip_shebang(input), "(let a 1)\n a")
-    }
-
-    #[test]
-    fn skip_shebang_handles_no_shebang_line() {
-        let input = "(let a 1)\n a".to_string();
-        assert_eq!(skip_shebang(input), "(let a 1)\n a")
-    }
 }
