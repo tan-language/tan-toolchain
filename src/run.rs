@@ -80,10 +80,9 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     }
 
     // let result = eval_module(path);
-    //
     // if let Err(errors) = result {
-    //     // eprintln!("{}", format_errors(&input, &errors));
-    //     dbg!(errors);
+    //     // #TODO precise formating is _required_ here!
+    //     eprintln!("{}", format_errors(&errors));
     // };
 
     Ok(())
