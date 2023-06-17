@@ -2,10 +2,7 @@ use std::io::{stdout, Write};
 
 use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{ann::Ann, api::eval_string, eval::env::Env, expr::Expr};
-
-use crate::util::format_errors;
-
-// use crate::util::eval_string_with_error_report;
+use tan_fmt::format_error_pretty;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
@@ -56,18 +53,25 @@ pub fn handle_repl() -> anyhow::Result<()> {
         let readline = rl.readline(&format!("{index}> "));
 
         match readline {
-            Ok(line) => {
-                rl.add_history_entry(&line)?;
+            Ok(input) => {
+                rl.add_history_entry(&input)?;
 
                 // #TODO find better input variable name.
                 // #TODO use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
-                env.insert(format!("$i{index}"), Expr::String(line.clone()));
+                env.insert(format!("$i{index}"), Expr::String(input.clone()));
 
-                let result = eval_string(&line, &mut env);
+                let result = eval_string(&input, &mut env);
 
                 let Ok(Ann(value, ..)) = result else {
                     let errors = result.unwrap_err();
-                    eprintln!("{}", format_errors(&errors));
+
+                    let mut error_strings = Vec::new();
+                    for error in errors {
+                        error_strings.push(format!("ERROR: {}", format_error_pretty(&error, &input)));
+                    }
+
+                    eprintln!("{}", error_strings.join("\n\n"));
+
                     continue;
                 };
 
