@@ -1,7 +1,6 @@
 mod lint;
 mod repl;
 mod run;
-mod util;
 
 use clap::{Arg, Command};
 use lint::handle_lint;

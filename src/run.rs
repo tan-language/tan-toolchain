@@ -2,8 +2,7 @@ use std::path::Path;
 
 use clap::ArgMatches;
 use tan::eval::{env::Env, util::eval_module};
-
-use crate::util::format_errors;
+use tan_fmt::format_error_pretty;
 
 // fn eval_file(path: &str) {
 //     let input = std::fs::read_to_string(path).expect("cannot read input");
@@ -77,8 +76,15 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path = Path::new(path);
     let result = eval_module(path, &mut env);
     if let Err(errors) = result {
-        // #TODO precise formating is _required_ here!
-        eprintln!("{}", format_errors(&errors));
+        let mut error_strings = Vec::new();
+
+        for error in errors {
+            // #TODO fetch the correct input, using error.file_url
+            error_strings.push(format!("ERROR: {}", format_error_pretty(&error, "#TODO")));
+        }
+
+        // #TODO use tracing::info!()
+        eprintln!("{}", error_strings.join("\n\n"));
     };
 
     Ok(())
