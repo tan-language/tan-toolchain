@@ -1,9 +1,11 @@
 use std::io::{stdout, Write};
 
 use rustyline::{error::ReadlineError, DefaultEditor};
-use tan::{eval::env::Env, expr::Expr};
+use tan::{ann::Ann, api::eval_string, eval::env::Env, expr::Expr};
 
-use crate::util::eval_string_with_error_report;
+use crate::util::format_errors;
+
+// use crate::util::eval_string_with_error_report;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
@@ -61,7 +63,11 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 // #TODO use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
                 env.insert(format!("$i{index}"), Expr::String(line.clone()));
 
-                let Some(value) = eval_string_with_error_report(&line, &mut env) else {
+                let result = eval_string(&line, &mut env);
+
+                let Ok(Ann(value, ..)) = result else {
+                    let errors = result.unwrap_err();
+                    eprintln!("{}", format_errors(&errors));
                     continue;
                 };
 
