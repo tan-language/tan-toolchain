@@ -1,3 +1,5 @@
+// #TODO extract as lib.rs?
+mod format;
 mod lint;
 mod repl;
 mod run;
@@ -12,6 +14,7 @@ use crate::run::handle_run;
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> anyhow::Result<()> {
+    // #TODO extract, similar to tan-lsp-server
     tracing_subscriber::fmt()
         .with_writer(std::io::stderr)
         .without_time()
