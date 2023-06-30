@@ -1,7 +1,7 @@
 use std::io::{stdout, Write};
 
 use rustyline::{error::ReadlineError, DefaultEditor};
-use tan::{ann::Ann, api::eval_string, eval::env::Env, expr::Expr};
+use tan::{api::eval_string, eval::env::Env, expr::Expr};
 use tan_fmt::format_error_pretty;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
@@ -62,7 +62,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
                 let result = eval_string(&input, &mut env);
 
-                let Ok(Ann(value, ..)) = result else {
+                let Ok(value) = result else {
                     let errors = result.unwrap_err();
 
                     let mut error_strings = Vec::new();
