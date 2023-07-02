@@ -36,8 +36,15 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
                 }
                 _ => {
                     // #TODO temp solution, can we optimize?
-                    let input = std::fs::read_to_string(&error.file_path)?;
-                    error_strings.push(format!("ERROR: {}", format_error_pretty(&error, &input)));
+                    if let Ok(input) = std::fs::read_to_string(&error.file_path) {
+                        error_strings
+                            .push(format!("ERROR: {}", format_error_pretty(&error, &input)));
+                    } else {
+                        error_strings.push(format!(
+                            "ERROR: {} note: Cannot read the source file",
+                            format_error(&error)
+                        ));
+                    }
                 }
             }
         }
