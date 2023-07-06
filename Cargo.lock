@@ -524,14 +524,14 @@ dependencies = [
 
 [[package]]
 name = "tan"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "tracing",
 ]
 
 [[package]]
 name = "tan_cli"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -545,7 +545,7 @@ dependencies = [
 
 [[package]]
 name = "tan_fmt"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "regex",
  "tan",
@@ -553,7 +553,7 @@ dependencies = [
 
 [[package]]
 name = "tan_lint"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "lsp-types",
  "tan",

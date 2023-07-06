@@ -1,8 +1,8 @@
 [package]
 name = "tan_cli"
 description = "The Tan CLI"
-version = "0.6.0"
-license = "MIT OR Apache-2.0"
+version = "0.7.0"
+license = "Apache-2.0"
 repository = "https://github.com/tanlang-org/tan_cli"
 keywords = ["tan", "language", "cli"]
 authors = ["George Moschovitis <gmosx@reizu.org>"]
@@ -14,9 +14,9 @@ clap = "4"
 rustyline = "11.0.0"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-tan = { path = "../tan", version = "0.6" }
-tan_fmt = { path = "../tan_fmt", version = "0.6" }
-tan_lint = { path = "../tan_lint", version = "0.6" }
+tan = { path = "../tan", version = "0.7" }
+tan_fmt = { path = "../tan_fmt", version = "0.7" }
+tan_lint = { path = "../tan_lint", version = "0.7" }
 
 [[bin]]
 name = "tan"
