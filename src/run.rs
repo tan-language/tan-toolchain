@@ -5,7 +5,7 @@ use tan::{
     error::ErrorKind,
     eval::{env::Env, util::eval_module},
 };
-use tan_fmt::{format_error, format_error_pretty};
+use tan_formatting::{format_error, format_error_pretty};
 
 // #TODO try to reuse the code from "use".
 /// Read and evaluate a Tan program file.

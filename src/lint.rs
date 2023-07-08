@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use tan_lint::{compute_diagnostics, Diagnostic, DiagnosticSeverity};
+use tan_lints::{compute_diagnostics, Diagnostic, DiagnosticSeverity};
 
 fn format_diagnostic(diagnostic: &Diagnostic) -> String {
     // #TODO improve the formatting.

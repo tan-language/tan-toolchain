@@ -1,10 +1,10 @@
 [package]
-name = "tan_cli"
-description = "The Tan CLI"
-version = "0.7.0"
+name = "tan-tools"
+description = "CLI tools for the Tan Language"
+version = "0.7.1"
 license = "Apache-2.0"
 repository = "https://github.com/tanlang-org/tan_cli"
-keywords = ["tan", "language", "cli"]
+keywords = ["tan", "language", "tools", "cli"]
 authors = ["George Moschovitis <gmosx@reizu.org>"]
 edition = "2021"
 
@@ -15,8 +15,8 @@ rustyline = "11.0.0"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 tan = { path = "../tan", version = "0.7" }
-tan_fmt = { path = "../tan_fmt", version = "0.7" }
-tan_lint = { path = "../tan_lint", version = "0.7" }
+tan-formatting = { path = "../tan-formatting", version = "0.7" }
+tan-lints = { path = "../tan-lints", version = "0.7" }
 
 [[bin]]
 name = "tan"

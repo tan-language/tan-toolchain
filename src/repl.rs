@@ -2,7 +2,7 @@ use std::io::{stdout, Write};
 
 use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{api::eval_string, eval::env::Env, expr::Expr};
-use tan_fmt::format_error_pretty;
+use tan_formatting::format_error_pretty;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
