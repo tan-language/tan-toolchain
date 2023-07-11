@@ -1,10 +1,7 @@
 use std::path::Path;
 
 use clap::ArgMatches;
-use tan::{
-    error::ErrorKind,
-    eval::{env::Env, util::eval_module},
-};
+use tan::{context::Context, error::ErrorKind, eval::util::eval_module};
 use tan_formatting::{format_error, format_error_pretty};
 
 // #TODO try to reuse the code from "use".
@@ -14,10 +11,10 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         .get_one("PATH")
         .expect("missing path to program file");
 
-    let mut env = Env::prelude();
+    let mut context = Context::new();
     let path = Path::new(path);
 
-    let result = eval_module(path, &mut env);
+    let result = eval_module(path, &mut context);
 
     if let Err(errors) = result {
         let mut error_strings = Vec::new();

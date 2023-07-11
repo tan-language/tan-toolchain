@@ -1,7 +1,7 @@
 use std::io::{stdout, Write};
 
 use rustyline::{error::ReadlineError, DefaultEditor};
-use tan::{api::eval_string, eval::env::Env, expr::Expr};
+use tan::{api::eval_string, context::Context, expr::Expr};
 use tan_formatting::format_error_pretty;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
@@ -42,7 +42,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
     println!("Tan, press CTRL-D to exit.");
 
-    let mut env = Env::prelude();
+    let mut context = Context::new();
 
     let mut index = 0;
 
@@ -58,9 +58,11 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
                 // #TODO find better input variable name.
                 // #TODO use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
-                env.insert(format!("$i{index}"), Expr::String(input.clone()));
+                context
+                    .scope
+                    .insert(format!("$i{index}"), Expr::String(input.clone()));
 
-                let result = eval_string(&input, &mut env);
+                let result = eval_string(&input, &mut context);
 
                 let Ok(value) = result else {
                     let errors = result.unwrap_err();
@@ -77,7 +79,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
                 // #TODO find better output variable name.
                 // #TODO use output list/array, like wolfram, e.g. (*out* 1)
-                env.insert(format!("$o{index}"), value.clone());
+                context.scope.insert(format!("$o{index}"), value.clone());
 
                 match value {
                     Expr::One => (),
