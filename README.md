@@ -1,6 +1,6 @@
 # Tan Tools
 
-A collection of CLI tools for the Tan Language. The target audience is developers
+A collection of CLI tools for the Tan Language. The target audience are developers
 and users for the language.
 
 ## Install
@@ -37,10 +37,6 @@ For questions, suggestions, etc, you can reach the maintainer on
 
 This work is distributed under the terms of the Apache License (Version 2.0).
 See the [License](LICENSE.txt) for details.
-
-Any contribution intentionally submitted for inclusion in this project, as
-defined in the Apache-2.0 License, shall be licensed as above, without any
-additional terms or conditions.
 
 ## Disclaimer
 
