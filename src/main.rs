@@ -1,4 +1,3 @@
-// #TODO extract as lib.rs?
 mod format;
 mod lint;
 mod repl;
@@ -59,7 +58,6 @@ fn main() -> anyhow::Result<()> {
     let matches = tan_cmd.get_matches();
 
     if let Some(run_matches) = matches.subcommand_matches("run") {
-        // #TODO also handle run if a single `.tan` filename is passed.
         handle_run(run_matches)?;
     } else if let Some(lint_matches) = matches.subcommand_matches("lint") {
         handle_lint(lint_matches)?;
