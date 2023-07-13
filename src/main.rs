@@ -5,6 +5,7 @@ mod repl;
 mod run;
 
 use clap::{Arg, Command};
+use format::handle_format;
 use lint::handle_lint;
 use tracing_subscriber::util::SubscriberInitExt;
 
@@ -22,7 +23,6 @@ fn main() -> anyhow::Result<()> {
         .finish()
         .init();
 
-    // #TODO consider a different name? even though 'run' is generic enough.
     let run_cmd = Command::new("run").about("Run a Tan program").arg(
         Arg::new("PATH")
             .help("The path of the program")
@@ -37,13 +37,21 @@ fn main() -> anyhow::Result<()> {
             .index(1),
     );
 
+    let format_cmd = Command::new("format").about("Format a Tan text file").arg(
+        Arg::new("PATH")
+            .help("The path of the text")
+            .required(true)
+            .index(1),
+    );
+
     let tan_cmd = Command::new("tan")
         .bin_name("tan")
         .author("George Moschovitis, gmosx@reizu.org")
         .version(VERSION)
         .about("A CLI for the Tan Language")
         .subcommand(run_cmd)
-        .subcommand(lint_cmd);
+        .subcommand(lint_cmd)
+        .subcommand(format_cmd);
 
     let matches = tan_cmd.get_matches();
 
@@ -52,6 +60,8 @@ fn main() -> anyhow::Result<()> {
         handle_run(run_matches)?;
     } else if let Some(lint_matches) = matches.subcommand_matches("lint") {
         handle_lint(lint_matches)?;
+    } else if let Some(format_matches) = matches.subcommand_matches("format") {
+        handle_format(format_matches)?;
     } else {
         handle_repl()?;
     }
