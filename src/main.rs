@@ -14,14 +14,17 @@ use crate::run::handle_run;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-fn main() -> anyhow::Result<()> {
-    // #TODO extract, similar to tan-lsp-server
+fn init_tracing() {
     tracing_subscriber::fmt()
         .with_writer(std::io::stderr)
         .without_time()
         .with_target(false)
         .finish()
         .init();
+}
+
+fn main() -> anyhow::Result<()> {
+    init_tracing();
 
     let run_cmd = Command::new("run").about("Run a Tan program").arg(
         Arg::new("PATH")
