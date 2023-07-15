@@ -25,12 +25,15 @@ fn init_tracing() {
 fn main() -> anyhow::Result<()> {
     init_tracing();
 
-    let run_cmd = Command::new("run").about("Run a Tan program").arg(
-        Arg::new("PATH")
-            .help("The path of the program")
-            .default_value(".") // if the path is missing default to the current directory
-            .index(1),
-    );
+    let run_cmd = Command::new("run")
+        .about("Run a Tan program")
+        .aliases(["r", "exec"])
+        .arg(
+            Arg::new("PATH")
+                .help("The path of the program")
+                .default_value(".") // if the path is missing default to the current directory
+                .index(1),
+        );
 
     let lint_cmd = Command::new("lint").about("Lint a Tan text file").arg(
         Arg::new("PATH")
