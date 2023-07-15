@@ -1,7 +1,7 @@
 # Tan Tools
 
 A collection of CLI tools for the Tan Language. The target audience are developers
-and users for the language.
+and users of the language.
 
 ## Install
 
