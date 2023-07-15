@@ -24,7 +24,7 @@ tan r module-dir
 ```
 
 ```sh
-tan format file # shorter tan fmt file
+tan format file # shorter: tan fmt file
 ```
 
 ## Status
