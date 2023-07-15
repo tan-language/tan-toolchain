@@ -28,7 +28,7 @@ fn main() -> anyhow::Result<()> {
     let run_cmd = Command::new("run").about("Run a Tan program").arg(
         Arg::new("PATH")
             .help("The path of the program")
-            .required(true)
+            .default_value(".") // if the path is missing default to the current directory
             .index(1),
     );
 

@@ -4,12 +4,9 @@ use clap::ArgMatches;
 use tan::{context::Context, error::ErrorKind, eval::util::eval_module};
 use tan_formatting::{format_error, format_error_pretty};
 
-// #TODO try to reuse the code from "use".
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
-    let path: &String = run_matches
-        .get_one("PATH")
-        .expect("missing path to program file");
+    let path: &String = run_matches.get_one("PATH").unwrap();
 
     let mut context = Context::new();
     let path = Path::new(path);
