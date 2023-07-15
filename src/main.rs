@@ -42,12 +42,15 @@ fn main() -> anyhow::Result<()> {
             .index(1),
     );
 
-    let format_cmd = Command::new("format").about("Format a Tan text file").arg(
-        Arg::new("PATH")
-            .help("The path of the text")
-            .required(true)
-            .index(1),
-    );
+    let format_cmd = Command::new("format")
+        .about("Format a Tan text file")
+        .alias("fmt")
+        .arg(
+            Arg::new("PATH")
+                .help("The path of the text")
+                .required(true)
+                .index(1),
+        );
 
     let tan_cmd = Command::new("tan")
         .bin_name("tan")

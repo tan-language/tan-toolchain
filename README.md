@@ -12,11 +12,19 @@ cargo install --path .
 ## Usage
 
 ```sh
-tan run module-dir
+tan run module-dir # shorter: tan r module-dir
 ```
 
 ```sh
 tan run file
+```
+
+```sh
+tan r module-dir
+```
+
+```sh
+tan format file # shorter tan fmt file
 ```
 
 ## Status
