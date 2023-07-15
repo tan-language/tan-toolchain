@@ -1,7 +1,7 @@
 use std::io::{stdout, Write};
 
 use rustyline::{error::ReadlineError, DefaultEditor};
-use tan::{api::eval_string, context::Context, expr::Expr};
+use tan::{api::eval_string, context::Context, expr::Expr, stdlib::setup_std};
 use tan_formatting::format_error_pretty;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
@@ -43,6 +43,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
     println!("Tan, press CTRL-D to exit.");
 
     let mut context = Context::new();
+    setup_std(&mut context);
 
     let mut index = 0;
 
