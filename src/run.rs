@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use clap::ArgMatches;
-use tan::{context::Context, error::ErrorKind, eval::util::eval_module, stdlib::setup_std};
+use tan::{context::Context, error::ErrorKind, eval::util::eval_module};
 use tan_formatting::{format_error, format_error_pretty};
 
 /// Read and evaluate a Tan program file.
@@ -9,7 +9,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = run_matches.get_one("PATH").unwrap();
 
     let mut context = Context::new();
-    setup_std(&mut context);
+
     let path = Path::new(path);
 
     let result = eval_module(path, &mut context);
