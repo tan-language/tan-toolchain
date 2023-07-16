@@ -63,6 +63,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                     .scope
                     .insert(format!("$i{index}"), Expr::String(input.clone()));
 
+                // #insight this version of eval_string does not create a new module for each input, which is what we want.
                 let result = eval_string(&input, &mut context);
 
                 let Ok(value) = result else {
