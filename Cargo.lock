@@ -603,7 +603,7 @@ dependencies = [
 
 [[package]]
 name = "tan"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "rand",
  "tracing",
@@ -611,7 +611,7 @@ dependencies = [
 
 [[package]]
 name = "tan-formatting"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "regex",
  "tan",
@@ -619,7 +619,7 @@ dependencies = [
 
 [[package]]
 name = "tan-lints"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "lsp-types",
  "tan",
@@ -627,7 +627,7 @@ dependencies = [
 
 [[package]]
 name = "tan-tools"
-version = "0.7.1"
+version = "0.8.0"
 dependencies = [
  "anyhow",
  "clap",
