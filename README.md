@@ -1,7 +1,7 @@
-# Tan Tools
+# Tan Toolchain
 
-A collection of CLI tools for the Tan Language. The target audience are developers
-and users of the language.
+A collection of CLI tools for the Tan Language. The target audience are
+developers and users of the language.
 
 ## Install
 
@@ -38,7 +38,9 @@ features and bug fixes.
 
 ## License
 
-This work is licensed under the Apache-2.0 License. See [LICENSE.txt](LICENSE.txt) or <https://spdx.org/licenses/Apache-2.0.html> for details.
+This work is licensed under the Apache-2.0 License. See
+[LICENSE.txt](LICENSE.txt) or <https://spdx.org/licenses/Apache-2.0.html> for
+details.
 
 ## Copyright
 
