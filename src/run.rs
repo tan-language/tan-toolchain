@@ -8,9 +8,14 @@ use tan_formatting::{format_error, format_error_pretty};
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = run_matches.get_one("PATH").unwrap();
 
-    let mut context = Context::new();
-
     let path = Path::new(path);
+
+    // #todo handle general URLs, not only file://
+
+    let path = std::fs::canonicalize(path)?;
+    let path = format!("file://{}", path.to_string_lossy());
+
+    let mut context = Context::new();
 
     let result = eval_module(path, &mut context);
 
