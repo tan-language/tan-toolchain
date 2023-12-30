@@ -6,13 +6,13 @@ use tan_formatting::format_error_pretty;
 
 const HISTORY_FILENAME: &str = ".tan_history.txt";
 
-// #TODO if we use an array for %i and %o, we can apply all the Seq functions, potentially useful! but it's less ergonomic.
-// #TODO don't advance the line-variable if the input is just a comment
-// #TODO `---` comments are convenient as separators.
+// #todo if we use an array for %i and %o, we can apply all the Seq functions, potentially useful! but it's less ergonomic.
+// #todo don't advance the line-variable if the input is just a comment
+// #todo `---` comments are convenient as separators.
 
-// #TODO rename to `shell` or something else?
+// #todo rename to `shell` or something else?
 pub fn handle_repl() -> anyhow::Result<()> {
-    // #TODO support completer!
+    // #todo support completer!
 
     // let config = Config::builder()
     //     .history_ignore_space(true)
@@ -47,17 +47,17 @@ pub fn handle_repl() -> anyhow::Result<()> {
     let mut index = 0;
 
     loop {
-        // #TODO what would be a cool prompt? (Wolfram Language has an interesting prompt).
-        // #TODO have prefix for output/result also.
-        // #TODO try to use the legendary `READY` in some capacity.
+        // #todo what would be a cool prompt? (Wolfram Language has an interesting prompt).
+        // #todo have prefix for output/result also.
+        // #todo try to use the legendary `READY` in some capacity.
         let readline = rl.readline(&format!("{index}> "));
 
         match readline {
             Ok(input) => {
                 rl.add_history_entry(&input)?;
 
-                // #TODO find better input variable name.
-                // #TODO use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
+                // #todo find better input variable name.
+                // #todo use input list/array, like wolfram, e.g. (*in* 1), nah too difficult to type!
                 context
                     .scope
                     .insert(format!("$i{index}"), Expr::String(input.clone()));
@@ -70,7 +70,8 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
                     let mut error_strings = Vec::new();
                     for error in errors {
-                        error_strings.push(format!("ERROR: {}", format_error_pretty(&error, &input)));
+                        error_strings
+                            .push(format!("ERROR: {}", format_error_pretty(&error, &input)));
                     }
 
                     eprintln!("{}", error_strings.join("\n\n"));
@@ -78,8 +79,8 @@ pub fn handle_repl() -> anyhow::Result<()> {
                     continue;
                 };
 
-                // #TODO find better output variable name.
-                // #TODO use output list/array, like wolfram, e.g. (*out* 1)
+                // #todo find better output variable name.
+                // #todo use output list/array, like wolfram, e.g. (*out* 1)
                 context.scope.insert(format!("$o{index}"), value.clone());
 
                 match value {
@@ -106,7 +107,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
         index += 1;
     }
 
-    // #TODO could we trap the (exit)?
+    // #todo could we trap the (exit)?
     rl.save_history(HISTORY_FILENAME).unwrap();
 
     Ok(())

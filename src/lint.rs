@@ -2,7 +2,7 @@ use clap::ArgMatches;
 use tan_lints::{compute_diagnostics, Diagnostic, DiagnosticSeverity};
 
 fn format_diagnostic(diagnostic: &Diagnostic) -> String {
-    // #TODO improve the formatting.
+    // #todo improve the formatting.
     format!(
         "{:?} [line: {}, col: {}]: {}",
         diagnostic.severity.unwrap_or(DiagnosticSeverity::WARNING),
@@ -13,7 +13,7 @@ fn format_diagnostic(diagnostic: &Diagnostic) -> String {
 }
 
 pub fn handle_lint(lint_matches: &ArgMatches) -> anyhow::Result<()> {
-    // #TODO extract and reuse handling of file or dir from other commands.
+    // #todo extract and reuse handling of file or dir from other commands.
 
     let path: &String = lint_matches
         .get_one("PATH")

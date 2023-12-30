@@ -35,7 +35,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
                     error_strings.push(strings.join(""));
                 }
                 _ => {
-                    // #TODO temp solution, can we optimize?
+                    // #todo temp solution, can we optimize?
                     if let Ok(input) = std::fs::read_to_string(&error.file_path) {
                         error_strings
                             .push(format!("ERROR: {}", format_error_pretty(&error, &input)));
@@ -49,7 +49,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
             }
         }
 
-        // #TODO use tracing::info!()
+        // #todo use tracing::info!()
         eprintln!("{}", error_strings.join("\n\n"));
     };
 
