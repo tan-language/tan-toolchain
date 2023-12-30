@@ -29,7 +29,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
                     strings.push(format!("ERROR: {}", format_error(&error)));
                     for inner_error in inner_errors {
-                        strings.push(format!("       + {}", format_error(&inner_error)));
+                        strings.push(format!("       + {}", format_error(inner_error)));
                     }
 
                     error_strings.push(strings.join(""));

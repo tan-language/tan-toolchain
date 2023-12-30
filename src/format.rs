@@ -9,7 +9,7 @@ pub fn handle_format(lint_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let input = std::fs::read_to_string(path)?;
 
-    let Ok(exprs) = parse_string_all(&input) else {
+    let Ok(exprs) = parse_string_all(input) else {
         return Err(anyhow::anyhow!("cannot parse the file"));
     };
 
