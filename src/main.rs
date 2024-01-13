@@ -3,7 +3,7 @@ mod lint;
 mod repl;
 mod run;
 
-use clap::{Arg, Command};
+use clap::{Arg, ArgAction, Command};
 use format::handle_format;
 use lint::handle_lint;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -31,8 +31,13 @@ fn main() -> anyhow::Result<()> {
         .arg(
             Arg::new("PATH")
                 .help("The path of the program")
-                .default_value(".") // if the path is missing default to the current directory
-                .index(1),
+                .default_value("."), // if the path is missing default to the current directory
+        )
+        .arg(
+            Arg::new("program_args")
+                .help("Extra arguments to pass to the program")
+                .action(ArgAction::Append)
+                .last(true), // #todo consider .trailing_var_arg(true)
         );
 
     let lint_cmd = Command::new("lint").about("Lint a Tan text file").arg(

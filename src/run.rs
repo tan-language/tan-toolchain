@@ -1,12 +1,22 @@
-use std::path::Path;
+use std::{path::Path, rc::Rc};
 
 use clap::ArgMatches;
-use tan::{context::Context, error::ErrorKind, eval::util::eval_module};
+use tan::{context::Context, error::ErrorKind, eval::util::eval_module, expr::Expr};
 use tan_formatting::{format_error, format_error_pretty};
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = run_matches.get_one("PATH").unwrap();
+
+    // Extracts arguments following the `--` separator. These arguments are passed
+    // as the `**process-args**` to the program.
+
+    let program_args: Vec<&String> =
+        if let Some(program_args) = run_matches.get_many("program_args") {
+            program_args.collect()
+        } else {
+            Vec::new()
+        };
 
     let path = Path::new(path);
 
@@ -17,7 +27,16 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let mut context = Context::new();
 
+    // #todo #hack this is a temp solution.
+    // #todo consider capital letters for 'magic'/external constants.
+    let process_args: Vec<Expr> = program_args.into_iter().map(Expr::string).collect();
+    context
+        .top_scope
+        .insert("**process-args**", Rc::new(Expr::array(process_args)));
+
     let result = eval_module(path, &mut context);
+
+    // #todo show better error if file not found.
 
     if let Err(errors) = result {
         let mut error_strings = Vec::new();
