@@ -34,7 +34,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         .top_scope
         .insert("**process-args**", Rc::new(Expr::array(process_args)));
 
-    let result = eval_module(path, &mut context);
+    let result = eval_module(path, &mut context, false);
 
     // #todo show better error if file not found.
 
