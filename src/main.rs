@@ -77,14 +77,18 @@ fn main() -> anyhow::Result<()> {
             "lint" => handle_lint(subcommand_matches)?,
             "format" => handle_format(subcommand_matches)?,
             _ => {
+                // #todo extract this as a function.
                 // Try to run an external subcommand (e.g. a tan plugin)
 
-                let subcommand_args: Vec<_> = subcommand_matches
+                let mut subcommand_args: Vec<_> = subcommand_matches
                     .get_many::<OsString>("")
                     .unwrap()
                     .collect();
 
-                // dbg!(subcommand, subcommand_args);
+                // Prepend the subcommand name to the arguments, to match the
+                // corresponding Cargo plugin convention.
+                let s = OsString::from(subcommand);
+                subcommand_args.insert(0, &s);
 
                 // Convert the subcommand name into a standardized tan plugin naming scheme.
                 let subcommand = format!("tan-{subcommand}");
