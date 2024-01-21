@@ -62,20 +62,27 @@ fn main() -> anyhow::Result<()> {
         .author("George Moschovitis, gmosx@reizu.org")
         .version(VERSION)
         .about("A CLI for the Tan Language")
+        .allow_external_subcommands(true)
         .subcommand(run_cmd)
         .subcommand(lint_cmd)
         .subcommand(format_cmd);
 
     let matches = tan_cmd.get_matches();
 
-    if let Some(run_matches) = matches.subcommand_matches("run") {
-        handle_run(run_matches)?;
-    } else if let Some(lint_matches) = matches.subcommand_matches("lint") {
-        handle_lint(lint_matches)?;
-    } else if let Some(format_matches) = matches.subcommand_matches("format") {
-        handle_format(format_matches)?;
-    } else {
-        handle_repl()?;
+    match matches.subcommand() {
+        Some((subcommand, subcommand_matches)) => match subcommand {
+            "run" => handle_run(subcommand_matches)?,
+            "lint" => handle_lint(subcommand_matches)?,
+            "format" => handle_format(subcommand_matches)?,
+            _ => {
+                println!("EXTERNAL SUBCOMMAND: {subcommand}");
+                // #todo actually call the external command.
+            }
+        },
+        None => {
+            // By default execute the repl command.
+            handle_repl()?;
+        }
     }
 
     Ok(())
