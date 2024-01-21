@@ -3,6 +3,8 @@ mod lint;
 mod repl;
 mod run;
 
+use std::ffi::OsString;
+
 use clap::{Arg, ArgAction, Command};
 use format::handle_format;
 use lint::handle_lint;
@@ -75,8 +77,27 @@ fn main() -> anyhow::Result<()> {
             "lint" => handle_lint(subcommand_matches)?,
             "format" => handle_format(subcommand_matches)?,
             _ => {
-                println!("EXTERNAL SUBCOMMAND: {subcommand}");
-                // #todo actually call the external command.
+                // Try to run an external subcommand (e.g. a tan plugin)
+
+                let subcommand_args: Vec<_> = subcommand_matches
+                    .get_many::<OsString>("")
+                    .unwrap()
+                    .collect();
+
+                // dbg!(subcommand, subcommand_args);
+
+                // Convert the subcommand name into a standardized tan plugin naming scheme.
+                let subcommand = format!("tan-{subcommand}");
+
+                // #todo better error reporting.
+                let mut child = std::process::Command::new(subcommand)
+                    .args(subcommand_args)
+                    .spawn()
+                    .expect("spawning the subcommand should not fail");
+
+                let status = child.wait().expect("should wait on child");
+
+                std::process::exit(status.code().unwrap_or_default());
             }
         },
         None => {
