@@ -1,0 +1,4 @@
+; #todo consider automatically importing `testing` for tests.
+(use testing [assert-eq])
+
+(assert-eq 1 2)

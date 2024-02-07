@@ -3,6 +3,7 @@ mod lint;
 mod repl;
 mod run;
 mod test;
+mod util;
 
 use std::ffi::OsString;
 
@@ -64,13 +65,13 @@ fn main() -> anyhow::Result<()> {
     // #todo add more test parameters
     let test_cmd = Command::new("test")
         .about("Execute unit and integration tests")
+        .arg(
+            Arg::new("PATH")
+                // #todo improve the help message
+                .help("The base path for the tests")
+                .default_value("."), // if the path is missing default to the current directory
+        )
         .alias("t");
-    // .arg(
-    //     Arg::new("PATH")
-    //         .help("The path of the text")
-    //         .required(true)
-    //         .index(1),
-    // );
 
     let tan_cmd = Command::new("tan")
         .bin_name("tan")

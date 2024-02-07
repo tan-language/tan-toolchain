@@ -1,21 +1,36 @@
+use std::path::PathBuf;
+
 use clap::ArgMatches;
+use walkdir::WalkDir;
 
-pub fn handle_test(_test_matches: &ArgMatches) -> anyhow::Result<()> {
-    println!("-- TEST --");
-    // let path: &String = lint_matches
-    //     .get_one("PATH")
-    //     .expect("missing path to program file");
+// cargo r -- test tests/fixtures/test-fixture
 
-    // let input = std::fs::read_to_string(path)?;
+// #todo use a different name than test: spec, conformance, something else?
 
-    // let Ok(exprs) = parse_string_all(input) else {
-    //     return Err(anyhow::anyhow!("cannot parse the file"));
-    // };
+// #todo follow symlinks
+// #todo a better name, filter_test_file_paths?
+fn compute_test_file_paths(path: &str) -> Vec<PathBuf> {
+    let mut paths = Vec::new();
+    for entry in WalkDir::new(path) {
+        let entry = entry.unwrap();
+        // #todo there must be a better way.
+        if entry.path().display().to_string().ends_with(".test.tan") {
+            paths.push(entry.path().into());
+        }
+    }
+    paths
+}
 
-    // let formatter = Formatter::new(&exprs);
-    // let formatted = formatter.format();
+pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
+    let path: &String = test_matches.get_one("PATH").unwrap();
 
-    // print!("{formatted}");
+    let test_file_paths = compute_test_file_paths(path);
+
+    for path in test_file_paths {
+        print!("test {}", path.display());
+        // #todo ansi colors needed here.
+        println!(" ..ok");
+    }
 
     Ok(())
 }
