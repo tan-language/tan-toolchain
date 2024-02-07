@@ -2,12 +2,15 @@ mod format;
 mod lint;
 mod repl;
 mod run;
+mod test;
+mod util;
 
 use std::ffi::OsString;
 
 use clap::{Arg, ArgAction, Command};
 use format::handle_format;
 use lint::handle_lint;
+use test::handle_test;
 use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::repl::handle_repl;
@@ -59,6 +62,17 @@ fn main() -> anyhow::Result<()> {
                 .index(1),
         );
 
+    // #todo add more test parameters
+    let test_cmd = Command::new("test")
+        .about("Execute unit and integration tests")
+        .arg(
+            Arg::new("PATH")
+                // #todo improve the help message
+                .help("The base path for the tests")
+                .default_value("."), // if the path is missing default to the current directory
+        )
+        .alias("t");
+
     let tan_cmd = Command::new("tan")
         .bin_name("tan")
         .author("George Moschovitis, gmosx@reizu.org")
@@ -67,7 +81,8 @@ fn main() -> anyhow::Result<()> {
         .allow_external_subcommands(true)
         .subcommand(run_cmd)
         .subcommand(lint_cmd)
-        .subcommand(format_cmd);
+        .subcommand(format_cmd)
+        .subcommand(test_cmd);
 
     let matches = tan_cmd.get_matches();
 
@@ -76,6 +91,7 @@ fn main() -> anyhow::Result<()> {
             "run" => handle_run(subcommand_matches)?,
             "lint" => handle_lint(subcommand_matches)?,
             "format" => handle_format(subcommand_matches)?,
+            "test" => handle_test(subcommand_matches)?,
             _ => {
                 // #todo extract this as a function.
                 // Try to run an external subcommand (e.g. a tan plugin)

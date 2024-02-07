@@ -14,6 +14,7 @@ clap = "4"
 rustyline = "13.0.0"
 tracing = "0.1"
 tracing-subscriber = "0.3"
+walkdir = "2"
 tan = { path = "../tan", version = "0.11" }
 tan-formatting = { path = "../tan-formatting", version = "0.11" }
 tan-lints = { path = "../tan-lints", version = "0.11" }
