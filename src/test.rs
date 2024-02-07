@@ -3,10 +3,13 @@ use std::path::PathBuf;
 use clap::ArgMatches;
 use walkdir::WalkDir;
 
+use crate::util::eval_file;
+
 // cargo r -- test tests/fixtures/test-fixture
 
 // #todo use a different name than test: spec, conformance, something else?
 
+// #todo apply some ordering
 // #todo follow symlinks
 // #todo a better name, filter_test_file_paths?
 fn compute_test_file_paths(path: &str) -> Vec<PathBuf> {
@@ -28,8 +31,14 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
 
     for path in test_file_paths {
         print!("test {}", path.display());
+        let result = eval_file(path.display().to_string());
         // #todo ansi colors needed here.
-        println!(" ..ok");
+        if result.is_ok() {
+            println!(" ..pass");
+        } else {
+            // #todo detailed reporting required!
+            println!(" ..fail");
+        }
     }
 
     Ok(())
