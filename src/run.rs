@@ -2,7 +2,7 @@ use std::{path::Path, rc::Rc};
 
 use clap::ArgMatches;
 use tan::{context::Context, error::ErrorKind, eval::util::eval_module, expr::Expr};
-use tan_formatting::{format_error, format_error_pretty};
+use tan_formatting::{format_error_pretty, format_error_short};
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -46,9 +46,9 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
                 ErrorKind::FailedUse(_module_path, inner_errors) => {
                     let mut strings = Vec::new();
 
-                    strings.push(format!("ERROR: {}", format_error(&error)));
+                    strings.push(format!("ERROR: {}\n", format_error_short(&error)));
                     for inner_error in inner_errors {
-                        strings.push(format!("       + {}", format_error(inner_error)));
+                        strings.push(format!("       + {}\n", format_error_short(inner_error)));
                     }
 
                     error_strings.push(strings.join(""));
@@ -61,7 +61,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
                     } else {
                         error_strings.push(format!(
                             "ERROR: {} note: Cannot read the source file",
-                            format_error(&error)
+                            format_error_short(&error)
                         ));
                     }
                 }
