@@ -1,20 +1,16 @@
-mod format;
-mod lint;
-mod repl;
-mod run;
-mod test;
+mod cmd;
 mod util;
 
 use std::ffi::OsString;
 
 use clap::{Arg, ArgAction, Command};
-use format::handle_format;
-use lint::handle_lint;
-use test::handle_test;
 use tracing_subscriber::util::SubscriberInitExt;
 
-use crate::repl::handle_repl;
-use crate::run::handle_run;
+use cmd::format::handle_format;
+use cmd::lint::handle_lint;
+use cmd::repl::handle_repl;
+use cmd::run::handle_run;
+use cmd::test::handle_test;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
