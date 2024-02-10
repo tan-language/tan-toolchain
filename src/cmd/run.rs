@@ -2,7 +2,8 @@ use std::{path::Path, rc::Rc};
 
 use clap::ArgMatches;
 use tan::{context::Context, error::ErrorKind, eval::util::eval_module, expr::Expr};
-use tan_formatting::{format_error_pretty, format_error_short};
+
+use crate::util::{format_error_pretty, format_error_short};
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
