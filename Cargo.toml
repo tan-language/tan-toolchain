@@ -1,7 +1,7 @@
 [package]
 name = "tan-toolchain"
 description = "CLI tools for the Tan Language"
-version = "0.11.0"
+version = "0.12.0"
 license = "Apache-2.0"
 repository = "https://github.com/tanlang-org/tan-toolchain"
 keywords = ["tan", "language", "toolchain", "cli"]
@@ -15,9 +15,9 @@ rustyline = "13.0.0"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 walkdir = "2"
-tan = { path = "../tan", version = "0.11" }
-tan-formatting = { path = "../tan-formatting", version = "0.11" }
-tan-lints = { path = "../tan-lints", version = "0.11" }
+tan = { path = "../tan", version = "0.12" }
+tan-formatting = { path = "../tan-formatting", version = "0.12" }
+tan-lints = { path = "../tan-lints", version = "0.12" }
 
 [[bin]]
 name = "tan"
