@@ -1,7 +1,7 @@
 use std::{path::Path, rc::Rc};
 
 use clap::ArgMatches;
-use tan::{context::Context, error::ErrorKind, eval::util::eval_module, expr::Expr};
+use tan::{context::Context, error::ErrorVariant, eval::util::eval_module, expr::Expr};
 
 use crate::util::{format_error_pretty, format_error_short};
 
@@ -44,7 +44,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
         for error in errors {
             match error.kind() {
-                ErrorKind::FailedUse(_module_path, inner_errors) => {
+                ErrorVariant::FailedUse(_module_path, inner_errors) => {
                     let mut strings = Vec::new();
 
                     strings.push(format!("ERROR: {}\n", format_error_short(&error)));
@@ -69,7 +69,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
             }
         }
 
-        // #todo use tracing::info!()
+        // #todo use tracing::error!()
         eprintln!("{}", error_strings.join("\n\n"));
     };
 
