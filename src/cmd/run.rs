@@ -3,7 +3,7 @@ use std::{path::Path, rc::Rc};
 use clap::ArgMatches;
 use tan::{context::Context, error::ErrorVariant, eval::util::eval_module, expr::Expr};
 
-use crate::util::{format_error_pretty, format_error_short};
+use crate::util::{format_error_pretty, format_error_short, format_panic_pretty};
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -53,6 +53,9 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
                     }
 
                     error_strings.push(strings.join(""));
+                }
+                ErrorVariant::Panic(..) => {
+                    error_strings.push(format!("PANIC: {}", format_panic_pretty(&error)));
                 }
                 _ => {
                     // #todo temp solution, can we optimize?

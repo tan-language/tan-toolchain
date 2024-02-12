@@ -1,4 +1,4 @@
-use tan::error::{Error, ErrorNote};
+use tan::error::{Error, ErrorNote, ErrorVariant};
 
 // #todo reuse the Position from tan?
 // #todo split into `format_expr`, `format_error`.
@@ -67,6 +67,10 @@ pub fn format_error_short(error: &Error) -> String {
 // #todo make more beautiful than Rust.
 // #todo add as method to Ranged<E: Error>? e.g. `format_pretty`
 pub fn format_error_pretty(error: &Error, input: &str) -> String {
+    // if matches!(error.variant, ErrorVariant::Panic(..)) {
+    //     return format_panic_pretty(error);
+    // }
+
     let Some(note) = error.notes.first() else {
         return format!("{}\n at {}", error.kind(), error.file_path);
     };
@@ -91,4 +95,25 @@ pub fn format_error_pretty(error: &Error, input: &str) -> String {
         .collect();
 
     format!("{prologue}\n{}", notes.join("\n"))
+}
+
+pub fn format_panic_pretty(error: &Error) -> String {
+    // #todo cleanup.
+
+    let ErrorVariant::Panic(ref msg) = error.variant else {
+        // should never happen.
+        panic!("we need to go deeper");
+    };
+
+    let Some(note) = error.notes.first() else {
+        // should never happen.
+        panic!("we need to go deeper");
+    };
+
+    let range = note.range.as_ref().unwrap();
+
+    format!(
+        "{}\n at {}:{}:{}",
+        msg, error.file_path, range.start.line, range.start.col
+    )
 }

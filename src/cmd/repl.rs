@@ -1,11 +1,12 @@
 use std::io::{stdout, Write};
 
+use crate::util::format_error_pretty;
 use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{api::eval_string, context::Context, expr::Expr};
-use crate::util::format_error_pretty;
 
-const HISTORY_FILENAME: &str = ".tan_history.txt";
+const HISTORY_FILENAME: &str = ".tan-history.txt";
 
+// #todo handle panic errors.
 // #todo if we use an array for %i and %o, we can apply all the Seq functions, potentially useful! but it's less ergonomic.
 // #todo don't advance the line-variable if the input is just a comment
 // #todo `---` comments are convenient as separators.
@@ -99,7 +100,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 break;
             }
             Err(err) => {
-                eprintln!("ERROR: {err:?}");
+                eprintln!("{err:?}");
                 break;
             }
         }
