@@ -114,6 +114,9 @@ pub fn format_panic_pretty(error: &Error) -> String {
 
     format!(
         "{}\n at {}:{}:{}",
-        msg, error.file_path, range.start.line, range.start.col
+        msg,
+        error.file_path,
+        range.start.line + 1,
+        range.start.col + 1
     )
 }
