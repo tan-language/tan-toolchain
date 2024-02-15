@@ -40,7 +40,7 @@ pub fn format_error_note_pretty(note: &ErrorNote, input: &str) -> String {
 
 #[allow(dead_code)]
 pub fn format_error(error: &Error) -> String {
-    format!("{} at {}", error.kind(), error.file_path)
+    format!("{} at {}", error.variant(), error.file_path)
 }
 
 // #todo reuse this in format_error_pretty.
@@ -50,14 +50,14 @@ pub fn format_error_short(error: &Error) -> String {
             let position = &range.start;
             return format!(
                 "{} at {}:{}:{}",
-                error.kind(),
+                error.variant(),
                 error.file_path,
                 position.line + 1,
                 position.col + 1,
             );
         }
     }
-    format!("{} at {}", error.kind(), error.file_path)
+    format!("{} at {}", error.variant(), error.file_path)
 }
 
 // #todo also format error without input.
@@ -72,20 +72,20 @@ pub fn format_error_pretty(error: &Error, input: &str) -> String {
     // }
 
     let Some(note) = error.notes.first() else {
-        return format!("{}\n at {}", error.kind(), error.file_path);
+        return format!("{}\n at {}", error.variant(), error.file_path);
     };
 
     let prologue = if let Some(range) = &note.range {
         let position = &range.start;
         format!(
             "{}\n at {}:{}:{}",
-            error.kind(),
+            error.variant(),
             error.file_path,
             position.line + 1,
             position.col + 1,
         )
     } else {
-        format!("{}\n at {}", error.kind(), error.file_path)
+        format!("{}\n at {}", error.variant(), error.file_path)
     };
 
     let notes: Vec<String> = error

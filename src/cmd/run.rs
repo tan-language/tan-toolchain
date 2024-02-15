@@ -43,7 +43,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         let mut error_strings = Vec::new();
 
         for error in errors {
-            match error.kind() {
+            match error.variant() {
                 ErrorVariant::FailedUse(_module_path, inner_errors) => {
                     let mut strings = Vec::new();
 
