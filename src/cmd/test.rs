@@ -3,6 +3,13 @@ use std::path::PathBuf;
 use clap::ArgMatches;
 use walkdir::WalkDir;
 
+// #todo
+// it's probably easier to implement this with Tan?
+// scan files
+// inject *testing-context*
+// eval the files
+// dump reported errors
+
 use crate::util::eval_file;
 
 // cargo r -- test tests/fixtures/test-fixture
@@ -32,6 +39,14 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     for path in test_file_paths {
         print!("test {}", path.display());
         let result = eval_file(path.display().to_string());
+
+        // let path = path.display().to_string();
+        // let input = std::fs::read_to_string(path).unwrap();
+        // let mut context = Context::new();
+        // #todo inject *testing-context* or *testing-session*
+        // context.dynamic_scope.insert(name, value);
+        // let result = eval_string(input, &mut context);
+
         // #todo ansi colors needed here.
         if result.is_ok() {
             println!(" ..pass");
