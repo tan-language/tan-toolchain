@@ -1,9 +1,24 @@
 use std::{path::Path, rc::Rc};
 
 use clap::ArgMatches;
-use tan::{context::Context, error::ErrorVariant, eval::util::eval_module, expr::Expr};
+use tan::{
+    context::Context,
+    error::{Error, ErrorVariant},
+    eval::util::eval_module,
+    expr::Expr,
+};
 
 use crate::util::{format_error_pretty, format_error_short, format_panic_pretty};
+
+// #todo use another name.
+// #todo temp solution, can we optimize?
+fn format_error(error: &Error) -> String {
+    if let Ok(input) = std::fs::read_to_string(&error.file_path) {
+        format!("ERROR: {}", format_error_pretty(error, &input))
+    } else {
+        format!("ERROR: {}", format_error_short(error))
+    }
+}
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -45,29 +60,16 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         for error in errors {
             match error.variant() {
                 ErrorVariant::FailedUse(_module_path, inner_errors) => {
-                    let mut strings = Vec::new();
-
-                    strings.push(format!("ERROR: {}\n", format_error_short(&error)));
+                    error_strings.push(format_error(&error));
                     for inner_error in inner_errors {
-                        strings.push(format!("       + {}\n", format_error_short(inner_error)));
+                        error_strings.push(format_error(inner_error));
                     }
-
-                    error_strings.push(strings.join(""));
                 }
                 ErrorVariant::Panic(..) => {
                     error_strings.push(format!("PANIC: {}", format_panic_pretty(&error)));
                 }
                 _ => {
-                    // #todo temp solution, can we optimize?
-                    if let Ok(input) = std::fs::read_to_string(&error.file_path) {
-                        error_strings
-                            .push(format!("ERROR: {}", format_error_pretty(&error, &input)));
-                    } else {
-                        error_strings.push(format!(
-                            "ERROR: {} note: Cannot read the source file",
-                            format_error_short(&error)
-                        ));
-                    }
+                    error_strings.push(format_error(&error));
                 }
             }
         }

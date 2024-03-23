@@ -49,7 +49,7 @@ pub fn format_error_short(error: &Error) -> String {
         if let Some(range) = &note.range {
             let position = &range.start;
             return format!(
-                "{} at {}:{}:{}",
+                "{}\n at {}:{}:{}",
                 error.variant(),
                 error.file_path,
                 position.line + 1,
@@ -57,7 +57,7 @@ pub fn format_error_short(error: &Error) -> String {
             );
         }
     }
-    format!("{} at {}", error.variant(), error.file_path)
+    format!("{}", error.variant())
 }
 
 // #todo also format error without input.
