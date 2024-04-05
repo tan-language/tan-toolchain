@@ -67,10 +67,12 @@ pub fn format_error_short(error: &Error) -> String {
 // #todo make more beautiful than Rust.
 // #todo add as method to Ranged<E: Error>? e.g. `format_pretty`
 pub fn format_error_pretty(error: &Error, input: &str) -> String {
+    println!("...0");
     // if matches!(error.variant, ErrorVariant::Panic(..)) {
     //     return format_panic_pretty(error);
     // }
 
+    // #todo potentially drinks errors.
     let Some(note) = error.notes.first() else {
         return format!("{}\n at {}", error.variant(), error.file_path);
     };
@@ -93,6 +95,24 @@ pub fn format_error_pretty(error: &Error, input: &str) -> String {
         .iter()
         .map(|note| format_error_note_pretty(note, input))
         .collect();
+
+    // #todo special handling of errors!
+
+    // match error.variant() {
+    //     ErrorVariant::FailedUse(_, upstream_errors) => {
+    //         println!(".....1");
+    //         let mut infos = Vec::new();
+    //         for ue in upstream_errors {
+    //             // #todo ideally should pretty-print the source errors and provide input!
+    //             println!(".....2");
+    //             infos.push(format_error_short(ue))
+    //         }
+    //         format!("{prologue}\n{}\n{}", infos.join("\n"), notes.join("\n"))
+    //     }
+    //     _ => {
+    //         format!("{prologue}\n{}", notes.join("\n"))
+    //     }
+    // }
 
     format!("{prologue}\n{}", notes.join("\n"))
 }

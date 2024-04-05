@@ -45,6 +45,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     // #todo #hack this is a temp solution.
     // #todo consider capital letters for 'magic'/external constants.
+    // #todo avoid ** for non dynamically-scoped variables.
     let process_args: Vec<Expr> = program_args.into_iter().map(Expr::string).collect();
     context
         .top_scope

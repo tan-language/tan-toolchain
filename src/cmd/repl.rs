@@ -2,7 +2,9 @@ use std::io::{stdout, Write};
 
 use crate::util::format_error_pretty;
 use rustyline::{error::ReadlineError, DefaultEditor};
-use tan::{api::eval_string, context::Context, expr::Expr};
+use tan::{
+    api::eval_string, context::Context, expr::Expr, util::standard_names::CURRENT_MODULE_PATH,
+};
 
 const HISTORY_FILENAME: &str = ".tan-history.txt";
 
@@ -44,6 +46,15 @@ pub fn handle_repl() -> anyhow::Result<()> {
     println!("Tan, press CTRL-D to exit.");
 
     let mut context = Context::new();
+
+    // Initialize some global variables.
+
+    // #todo refactor this initialization.
+
+    let current_dir = std::env::current_dir()?.display().to_string();
+    context
+        .top_scope
+        .insert(CURRENT_MODULE_PATH, Expr::string(current_dir));
 
     let mut index = 0;
 
