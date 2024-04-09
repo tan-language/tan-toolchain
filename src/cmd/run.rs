@@ -1,4 +1,4 @@
-use std::{path::Path, rc::Rc};
+use std::{path::Path, sync::Arc};
 
 use clap::ArgMatches;
 use tan::{
@@ -49,7 +49,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let process_args: Vec<Expr> = program_args.into_iter().map(Expr::string).collect();
     context
         .top_scope
-        .insert("**process-args**", Rc::new(Expr::array(process_args)));
+        .insert("**process-args**", Arc::new(Expr::array(process_args)));
 
     let result = eval_module(path, &mut context, false);
 
