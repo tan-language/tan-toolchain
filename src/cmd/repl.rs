@@ -96,7 +96,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 context.scope.insert(format!("$o{index}"), value.clone());
 
                 match value {
-                    Expr::One => (),
+                    Expr::Nil => (),
                     _ => println!("{value}"),
                 }
 
