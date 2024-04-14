@@ -3,7 +3,10 @@ use std::io::{stdout, Write};
 use crate::util::format_error_pretty;
 use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{
-    api::eval_string, context::Context, expr::Expr, util::standard_names::CURRENT_MODULE_PATH,
+    api::eval_string,
+    context::Context,
+    expr::Expr,
+    util::standard_names::{CURRENT_FILE_PATH, CURRENT_MODULE_PATH},
 };
 
 const HISTORY_FILENAME: &str = ".tan-history.txt";
@@ -52,6 +55,8 @@ pub fn handle_repl() -> anyhow::Result<()> {
     // #todo refactor this initialization.
 
     let current_dir = std::env::current_dir()?.display().to_string();
+    // #todo what dummy value to use instead of `REPL`?
+    context.insert_special(CURRENT_FILE_PATH, Expr::string("REPL"));
     context
         .top_scope
         .insert(CURRENT_MODULE_PATH, Expr::string(current_dir));
