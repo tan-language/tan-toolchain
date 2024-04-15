@@ -1,10 +1,13 @@
-use std::path::Path;
+use std::{
+    path::Path,
+    sync::{Arc, RwLock},
+};
 
 use clap::ArgMatches;
 use tan::{
     context::Context,
     eval::{invoke_func, util::eval_module},
-    expr::Expr,
+    expr::{format_value, Expr},
 };
 
 // cargo r -- test tests/fixtures/test-fixture
@@ -40,6 +43,12 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let mut context = Context::new();
 
+    let test_failures: Arc<RwLock<Vec<Expr>>> = Arc::new(RwLock::new(Vec::new()));
+
+    context
+        .dynamic_scope
+        .insert("*test-failures*", Expr::Array(test_failures.clone()));
+
     // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
     // #todo setup PROFILE
 
@@ -56,11 +65,18 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
         // #insight #temp test-case methods start with test.
         if name.starts_with("test") {
             if let Expr::Func(_, _, _, filename) = value.unpack() {
-                // #todo also show filename.
-                println!("test `{name}` in `{filename}`.");
-                let _result = invoke_func(value, &Vec::new(), &mut context);
-                // #todo process the outcome.
-                // println!("{result:?}");
+                test_failures.write().unwrap().clear();
+                print!("test `{name}` in `{filename}` ");
+                invoke_func(value, &Vec::new(), &mut context)?;
+                let failure_count = test_failures.write().unwrap().len();
+                if failure_count > 0 {
+                    println!("FAIL");
+                    for failure in test_failures.read().unwrap().iter() {
+                        println!("{}", format_value(failure));
+                    }
+                } else {
+                    println!("OK");
+                }
             }
         }
     }
