@@ -47,6 +47,8 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
         // context.dynamic_scope.insert(name, value);
         // let result = eval_string(input, &mut context);
 
+        // #todo reuse tan functionality?
+
         // #todo ansi colors needed here.
         if result.is_ok() {
             println!(" ..pass");

@@ -43,6 +43,9 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let mut context = Context::new();
 
+    // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
+    // #todo setup PROFILE
+
     // #todo #hack this is a temp solution.
     // #todo consider capital letters for 'magic'/external constants.
     // #todo avoid ** for non dynamically-scoped variables.

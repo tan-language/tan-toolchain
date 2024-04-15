@@ -34,6 +34,7 @@ fn main() -> anyhow::Result<()> {
                 .help("The path of the program")
                 .default_value("."), // if the path is missing default to the current directory
         )
+        // #todo add --profile, --dev, --prod
         .arg(
             Arg::new("program_args")
                 .help("Extra arguments to pass to the program")
