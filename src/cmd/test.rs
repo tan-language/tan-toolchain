@@ -7,13 +7,6 @@ use tan::{
     expr::Expr,
 };
 
-// #todo
-// it's probably easier to implement this with Tan?
-// scan files
-// inject *testing-context*
-// eval the files
-// dump reported errors
-
 // cargo r -- test tests/fixtures/test-fixture
 
 // #todo use a different name than test: spec, conformance, something else?
@@ -32,6 +25,8 @@ use tan::{
 //     }
 //     paths
 // }
+
+// #todo reuse run cmd infrastructure.
 
 pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = test_matches.get_one("PATH").unwrap();
@@ -60,12 +55,12 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     for (name, value) in module.scope.bindings.read().unwrap().iter() {
         // #insight #temp test-case methods start with test.
         if name.starts_with("test") {
-            // #todo also show filename.
-            println!("test `{name}`");
-            if value.is_func() {
-                let result = invoke_func(value, &Vec::new(), &mut context);
+            if let Expr::Func(_, _, _, filename) = value.unpack() {
+                // #todo also show filename.
+                println!("test `{name}` in `{filename}`.");
+                let _result = invoke_func(value, &Vec::new(), &mut context);
                 // #todo process the outcome.
-                println!("{result:?}");
+                // println!("{result:?}");
             }
         }
     }
