@@ -8,26 +8,13 @@ use tan::{
     context::Context,
     eval::{invoke_func, util::eval_module},
     expr::{format_value, Expr},
+    util::standard_names::CURRENT_FILE_PATH,
 };
 
 // cargo r -- test tests/fixtures/test-fixture
 
 // #todo use a different name than test: spec, conformance, something else?
-
-// // #todo apply some ordering
-// // #todo follow symlinks
-// // #todo a better name, filter_test_file_paths?
-// fn compute_test_file_paths(path: &str) -> Vec<PathBuf> {
-//     let mut paths = Vec::new();
-//     for entry in WalkDir::new(path) {
-//         let entry = entry.unwrap();
-//         // #todo there must be a better way.
-//         if entry.path().display().to_string().ends_with(".test.tan") {
-//             paths.push(entry.path().into());
-//         }
-//     }
-//     paths
-// }
+// #todo *.test.tan files should be ignored on non-test-profile runs.
 
 // #todo reuse run cmd infrastructure.
 
@@ -64,10 +51,17 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     for (name, value) in module.scope.bindings.read().unwrap().iter() {
         // #insight #temp test-case methods start with test.
         if name.starts_with("test") {
-            if let Expr::Func(_, _, _, filename) = value.unpack() {
+            if let Expr::Func(_, _, _, file_path) = value.unpack() {
                 test_failures.write().unwrap().clear();
-                print!("test `{name}` in `{filename}` ");
+                print!("test `{name}` in `{file_path}` ");
+
+                let old_current_file_path = context.top_scope.get(CURRENT_FILE_PATH);
+                context
+                    .top_scope
+                    .insert(CURRENT_FILE_PATH, Expr::string(file_path));
+
                 invoke_func(value, &Vec::new(), &mut context)?;
+
                 let failure_count = test_failures.write().unwrap().len();
                 if failure_count > 0 {
                     println!("FAIL");
@@ -77,39 +71,16 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
                 } else {
                     println!("OK");
                 }
+
+                if let Some(old_current_file_path) = old_current_file_path {
+                    // #insight we should revert the previous current file, in case of 'use'
+                    context
+                        .top_scope
+                        .insert(CURRENT_FILE_PATH, old_current_file_path.unpack().clone());
+                }
             }
         }
     }
 
     Ok(())
 }
-
-// pub fn handle_test_old(test_matches: &ArgMatches) -> anyhow::Result<()> {
-//     let path: &String = test_matches.get_one("PATH").unwrap();
-
-//     let test_file_paths = compute_test_file_paths(path);
-
-//     for path in test_file_paths {
-//         print!("test {}", path.display());
-//         let result = eval_file(path.display().to_string());
-
-//         // let path = path.display().to_string();
-//         // let input = std::fs::read_to_string(path).unwrap();
-//         // let mut context = Context::new();
-//         // #todo inject *testing-context* or *testing-session*
-//         // context.dynamic_scope.insert(name, value);
-//         // let result = eval_string(input, &mut context);
-
-//         // #todo reuse tan functionality?
-
-//         // #todo ansi colors needed here.
-//         if result.is_ok() {
-//             println!(" ..pass");
-//         } else {
-//             // #todo detailed reporting required!
-//             println!(" ..fail");
-//         }
-//     }
-
-//     Ok(())
-// }
