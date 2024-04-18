@@ -11,6 +11,8 @@ use tan::{
     util::standard_names::CURRENT_FILE_PATH,
 };
 
+use crate::util::ansi::{bold, green, red};
+
 // cargo r -- test tests/fixtures/test-fixture
 
 // #todo use a different name than test: spec, conformance, something else?
@@ -64,12 +66,16 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
 
                 let failure_count = test_failures.write().unwrap().len();
                 if failure_count > 0 {
-                    println!("FAIL");
+                    println!("{}", bold(red("FAIL")));
                     for failure in test_failures.read().unwrap().iter() {
-                        println!("{}", format_value(failure));
+                        println!(
+                            "{} {}",
+                            bold(red("assertion failed:")),
+                            format_value(failure)
+                        );
                     }
                 } else {
-                    println!("OK");
+                    println!("{}", green("OK"));
                 }
 
                 if let Some(old_current_file_path) = old_current_file_path {

@@ -1,5 +1,6 @@
 // mod eval;
-mod fmt;
+pub mod ansi;
+pub mod fmt;
 
 // pub use eval::*;
 pub use fmt::*;
