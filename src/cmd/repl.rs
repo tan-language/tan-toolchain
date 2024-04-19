@@ -1,6 +1,6 @@
 use std::io::{stdout, Write};
 
-use crate::util::format_error_pretty;
+use crate::util::format_error_string;
 use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{
     api::eval_string,
@@ -85,14 +85,14 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 // #insight this version of eval_string does not create a new module for each input, which is what we want.
                 let result = eval_string(&input, &mut context);
 
+                // #todo handle panic.
+                // #todo use the same code as run.
+
                 let Ok(value) = result else {
                     let errors = result.unwrap_err();
 
-                    let mut error_strings = Vec::new();
-                    for error in errors {
-                        error_strings
-                            .push(format!("ERROR: {}", format_error_pretty(&error, &input)));
-                    }
+                    let error_strings: Vec<String> =
+                        errors.iter().map(format_error_string).collect();
 
                     eprintln!("{}", error_strings.join("\n\n"));
 

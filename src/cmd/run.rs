@@ -1,24 +1,9 @@
 use std::{path::Path, sync::Arc};
 
 use clap::ArgMatches;
-use tan::{
-    context::Context,
-    error::{Error, ErrorVariant},
-    eval::util::eval_module,
-    expr::Expr,
-};
+use tan::{context::Context, error::ErrorVariant, eval::util::eval_module, expr::Expr};
 
-use crate::util::{format_error_pretty, format_error_short, format_panic_pretty};
-
-// #todo use another name.
-// #todo temp solution, can we optimize?
-fn format_error(error: &Error) -> String {
-    if let Ok(input) = std::fs::read_to_string(&error.file_path) {
-        format!("ERROR: {}", format_error_pretty(error, &input))
-    } else {
-        format!("ERROR: {}", format_error_short(error))
-    }
-}
+use crate::util::{format_error_string, format_panic_string};
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -64,16 +49,16 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
         for error in errors {
             match error.variant() {
                 ErrorVariant::FailedUse(_module_path, inner_errors) => {
-                    error_strings.push(format_error(&error));
+                    error_strings.push(format_error_string(&error));
                     for inner_error in inner_errors {
-                        error_strings.push(format_error(inner_error));
+                        error_strings.push(format_error_string(inner_error));
                     }
                 }
                 ErrorVariant::Panic(..) => {
-                    error_strings.push(format!("PANIC: {}", format_panic_pretty(&error)));
+                    error_strings.push(format_panic_string(&error));
                 }
                 _ => {
-                    error_strings.push(format_error(&error));
+                    error_strings.push(format_error_string(&error));
                 }
             }
         }

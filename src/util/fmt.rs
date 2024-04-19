@@ -1,5 +1,7 @@
 use tan::error::{Error, ErrorNote, ErrorVariant};
 
+use crate::util::ansi::{bold, red};
+
 // #todo reuse the Position from tan?
 // #todo split into `format_expr`, `format_error`.
 // #todo add special support for formatting multiple errors?
@@ -43,6 +45,7 @@ pub fn format_error(error: &Error) -> String {
     format!("{} at {}", error.variant(), error.file_path)
 }
 
+// #todo don't print <input>
 // #todo reuse this in format_error_pretty.
 pub fn format_error_short(error: &Error) -> String {
     if let Some(note) = error.notes.first() {
@@ -60,6 +63,7 @@ pub fn format_error_short(error: &Error) -> String {
     format!("{}", error.variant())
 }
 
+// #todo don't print <input>:line:col, just line:col.
 // #todo also format error without input.
 // #todo implement this in ...Tan :)
 // #todo format the error as symbolic expression.
@@ -67,7 +71,6 @@ pub fn format_error_short(error: &Error) -> String {
 // #todo make more beautiful than Rust.
 // #todo add as method to Ranged<E: Error>? e.g. `format_pretty`
 pub fn format_error_pretty(error: &Error, input: &str) -> String {
-    println!("...0");
     // if matches!(error.variant, ErrorVariant::Panic(..)) {
     //     return format_panic_pretty(error);
     // }
@@ -139,4 +142,27 @@ pub fn format_panic_pretty(error: &Error) -> String {
         range.start.line + 1,
         range.start.col + 1
     )
+}
+
+// #todo find a better name.
+// #todo temp solution, can we optimize?
+pub fn format_error_string(error: &Error) -> String {
+    let error_str = if let Ok(input) = std::fs::read_to_string(&error.file_path) {
+        format_error_pretty(error, &input)
+    } else {
+        format_error_short(error)
+    };
+    format!("{} {}", bold(red("error:")), error_str)
+}
+
+// #todo reuse from_error_string.
+// #todo find a better name.
+// #todo temp solution, can we optimize?
+pub fn format_panic_string(error: &Error) -> String {
+    // let error_str = if let Ok(input) = std::fs::read_to_string(&error.file_path) {
+    //     format_error_pretty(error, &input)
+    // } else {
+    //     format_error_short(error)
+    // };
+    format!("{} {}", bold(red("panic:")), format_panic_pretty(error))
 }
