@@ -1,9 +1,9 @@
 use std::{path::Path, sync::Arc};
 
 use clap::ArgMatches;
-use tan::{context::Context, error::ErrorVariant, eval::util::eval_module, expr::Expr};
+use tan::{context::Context, eval::util::eval_module, expr::Expr};
 
-use crate::util::{format_error_string, format_panic_string};
+use crate::util::report::report_errors;
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -44,27 +44,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     // #todo show better error if file not found.
 
     if let Err(errors) = result {
-        let mut error_strings = Vec::new();
-
-        for error in errors {
-            match error.variant() {
-                ErrorVariant::FailedUse(_module_path, inner_errors) => {
-                    error_strings.push(format_error_string(&error));
-                    for inner_error in inner_errors {
-                        error_strings.push(format_error_string(inner_error));
-                    }
-                }
-                ErrorVariant::Panic(..) => {
-                    error_strings.push(format_panic_string(&error));
-                }
-                _ => {
-                    error_strings.push(format_error_string(&error));
-                }
-            }
-        }
-
-        // #todo use tracing::error!()
-        eprintln!("{}", error_strings.join("\n\n"));
+        report_errors(&errors);
     };
 
     Ok(())

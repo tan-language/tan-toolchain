@@ -1,6 +1,5 @@
 use std::io::{stdout, Write};
 
-use crate::util::format_error_string;
 use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{
     api::eval_string,
@@ -8,6 +7,8 @@ use tan::{
     expr::Expr,
     util::standard_names::{CURRENT_FILE_PATH, CURRENT_MODULE_PATH},
 };
+
+use crate::util::report::report_errors;
 
 const HISTORY_FILENAME: &str = ".tan-history.txt";
 
@@ -90,12 +91,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
                 let Ok(value) = result else {
                     let errors = result.unwrap_err();
-
-                    let error_strings: Vec<String> =
-                        errors.iter().map(format_error_string).collect();
-
-                    eprintln!("{}", error_strings.join("\n\n"));
-
+                    report_errors(&errors);
                     continue;
                 };
 
