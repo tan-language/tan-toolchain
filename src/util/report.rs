@@ -10,6 +10,7 @@ use crate::util::{
 // #todo find a better name.
 // #todo temp solution, can we optimize?
 fn format_error_string(error: &Error) -> String {
+    // #todo special handling of <input>, REPL, etc.
     let error_str = if let Ok(input) = std::fs::read_to_string(&error.file_path) {
         format_error_pretty(error, &input)
     } else {
