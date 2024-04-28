@@ -44,7 +44,7 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     // #todo show better error if file not found.
 
     if let Err(errors) = result {
-        report_errors(&errors);
+        report_errors(&errors, None);
     };
 
     Ok(())

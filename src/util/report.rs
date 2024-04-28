@@ -9,13 +9,21 @@ use crate::util::{
 
 // #todo find a better name.
 // #todo temp solution, can we optimize?
-fn format_error_string(error: &Error) -> String {
-    // #todo special handling of <input>, REPL, etc.
-    let error_str = if let Ok(input) = std::fs::read_to_string(&error.file_path) {
+fn format_error_string(error: &Error, input: Option<&String>) -> String {
+    let input = if let Some(input) = input {
+        Some(input.clone())
+    } else if let Ok(input) = std::fs::read_to_string(&error.file_path) {
+        Some(input)
+    } else {
+        None
+    };
+
+    let error_str = if let Some(input) = input {
         format_error_pretty(error, &input)
     } else {
         format_error_short(error)
     };
+
     format!("{} {}", bold(red("error:")), error_str)
 }
 
@@ -32,15 +40,15 @@ fn format_panic_string(error: &Error) -> String {
 }
 
 // #todo add unit tests.
-pub fn report_errors(errors: &[Error]) {
+pub fn report_errors(errors: &[Error], input: Option<&String>) {
     let mut error_strings = Vec::new();
 
     for error in errors {
         match error.variant() {
             ErrorVariant::FailedUse(_module_path, inner_errors) => {
-                error_strings.push(format_error_string(error));
+                error_strings.push(format_error_string(error, input));
                 for inner_error in inner_errors {
-                    error_strings.push(format_error_string(inner_error));
+                    error_strings.push(format_error_string(inner_error, input));
                 }
             }
             ErrorVariant::Panic(..) => {
@@ -53,7 +61,7 @@ pub fn report_errors(errors: &[Error]) {
                 std::process::exit(101);
             }
             _ => {
-                error_strings.push(format_error_string(error));
+                error_strings.push(format_error_string(error, input));
             }
         }
     }

@@ -91,7 +91,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
 
                 let Ok(value) = result else {
                     let errors = result.unwrap_err();
-                    report_errors(&errors);
+                    report_errors(&errors, Some(&input));
                     continue;
                 };
 
