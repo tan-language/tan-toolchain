@@ -11,7 +11,10 @@ use tan::{
     util::standard_names::CURRENT_FILE_PATH,
 };
 
-use crate::util::ansi::{bold, green, red};
+use crate::util::{
+    ansi::{bold, green, red},
+    report::report_errors,
+};
 
 // cargo r -- test tests/fixtures/test-fixture
 
@@ -41,8 +44,13 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
     // #todo setup PROFILE
 
-    // #todo proper error-handling needed here.
     let result = eval_module(path, &mut context, false);
+
+    if let Err(errors) = result {
+        report_errors(&errors, None);
+        // #todo flag the error here
+        return Ok(());
+    };
 
     let expr = result.unwrap();
     let Expr::Module(module) = expr.unpack() else {
@@ -62,7 +70,14 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
                     .top_scope
                     .insert(CURRENT_FILE_PATH, Expr::string(file_path));
 
-                invoke_func(value, &Vec::new(), &mut context)?;
+                // #todo will need to pass arguments by ref.
+                let result = invoke_func(value, Vec::new(), &mut context);
+
+                if let Err(error) = result {
+                    report_errors(&[error], None);
+                    // #todo flag the error here
+                    return Ok(());
+                };
 
                 let failure_count = test_failures.write().unwrap().len();
                 if failure_count > 0 {
