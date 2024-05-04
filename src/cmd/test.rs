@@ -18,6 +18,7 @@ use crate::util::{
 
 // cargo r -- test tests/fixtures/test-fixture
 
+// #todo add unit tests to verify error logging, etc.
 // #todo use a different name than test: spec, conformance, something else?
 // #todo *.test.tan files should be ignored on non-test-profile runs.
 
