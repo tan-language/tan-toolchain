@@ -44,7 +44,13 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
         .insert("*test-failures*", Expr::Array(test_failures.clone()));
 
     // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
-    // #todo setup PROFILE
+
+    // #insight don't set CURRENT_MODULE_PATH, it will be set in eval_module.
+
+    // let current_dir = std::env::current_dir()?.display().to_string();
+    // context
+    //     .top_scope
+    //     .insert(CURRENT_MODULE_PATH, Expr::string(current_dir));
 
     // #todo use a constant/enum for the PROFILE value.
     // #todo add custom helper method to context to setup '!special!' values.
