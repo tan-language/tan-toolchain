@@ -1,7 +1,7 @@
 use std::{path::Path, sync::Arc};
 
 use clap::ArgMatches;
-use tan::{context::Context, eval::util::eval_module, expr::Expr};
+use tan::{context::Context, eval::util::eval_module, expr::Expr, util::standard_names::PROFILE};
 
 use crate::util::report::report_errors;
 
@@ -30,6 +30,10 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
 
     // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
     // #todo setup PROFILE
+
+    // #todo use a constant/enum for the PROFILE value.
+    // #todo add custom helper method to context to setup '!special!' values.
+    context.top_scope.insert(PROFILE, Expr::string("test"));
 
     // #todo #hack this is a temp solution.
     // #todo consider capital letters for 'magic'/external constants.

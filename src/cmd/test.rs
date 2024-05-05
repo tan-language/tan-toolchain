@@ -21,6 +21,7 @@ use crate::util::{
 // #todo add unit tests to verify error logging, etc.
 // #todo use a different name than test: spec, conformance, something else?
 // #todo *.test.tan files should be ignored on non-test-profile runs.
+// #todo attach description annotations to unit-test functions to be printed when the tests run, is this really useful?
 
 // #todo reuse run cmd infrastructure.
 
