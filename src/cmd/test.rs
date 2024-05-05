@@ -8,7 +8,7 @@ use tan::{
     context::Context,
     eval::{invoke_func, util::eval_module},
     expr::{format_value, Expr},
-    util::standard_names::CURRENT_FILE_PATH,
+    util::standard_names::{CURRENT_FILE_PATH, PROFILE},
 };
 
 use crate::util::{
@@ -45,6 +45,10 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
 
     // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
     // #todo setup PROFILE
+
+    // #todo use a constant/enum for the PROFILE value.
+    // #todo add custom helper method to context to setup '!special!' values.
+    context.top_scope.insert(PROFILE, Expr::string("test"));
 
     let result = eval_module(path, &mut context, false);
 
