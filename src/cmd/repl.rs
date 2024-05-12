@@ -2,13 +2,14 @@ use std::io::{stdout, Write};
 
 use rustyline::{error::ReadlineError, DefaultEditor};
 use tan::{
-    api::eval_string,
+    api::compile_string,
     context::Context,
+    eval::eval,
     expr::Expr,
     util::standard_names::{CURRENT_FILE_PATH, CURRENT_MODULE_PATH},
 };
 
-use crate::util::report::report_errors;
+use crate::util::{canonicalize::canonicalize_input, report::report_errors};
 
 // #todo consider a different extensions, e.g. *.text
 // #todo consider saving history in tan (sexp) format.
@@ -86,14 +87,27 @@ pub fn handle_repl() -> anyhow::Result<()> {
                     .insert(format!("$i{index}"), Expr::String(input.clone()));
 
                 // #insight this version of eval_string does not create a new module for each input, which is what we want.
-                let result = eval_string(&input, &mut context);
+
+                let result = compile_string(&input, &mut context);
+
+                let Ok(exprs) = result else {
+                    let errors = result.unwrap_err();
+                    report_errors(&errors, Some(&input));
+                    continue;
+                };
+
+                // #todo pass the context also?
+                let expr = canonicalize_input(exprs);
+
+                // let result = eval_string(&input, &mut context);
+                let result = eval(&expr, &mut context);
 
                 // #todo handle panic.
                 // #todo use the same code as run.
 
                 let Ok(value) = result else {
-                    let errors = result.unwrap_err();
-                    report_errors(&errors, Some(&input));
+                    let error = result.unwrap_err();
+                    report_errors(&[error], Some(&input));
                     continue;
                 };
 

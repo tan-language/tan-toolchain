@@ -1,5 +1,6 @@
 // mod eval;
 pub mod ansi;
+pub mod canonicalize;
 pub mod fmt;
 pub mod report;
 
