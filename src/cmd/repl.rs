@@ -10,6 +10,8 @@ use tan::{
 
 use crate::util::report::report_errors;
 
+// #todo consider a different extensions, e.g. *.text
+// #todo consider saving history in tan (sexp) format.
 const HISTORY_FILENAME: &str = ".tan-history.txt";
 
 // #todo handle panic errors.
@@ -100,7 +102,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 context.scope.insert(format!("$o{index}"), value.clone());
 
                 match value {
-                    Expr::Nil => (),
+                    Expr::None => (),
                     _ => println!("{value}"),
                 }
 
