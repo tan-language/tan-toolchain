@@ -2,7 +2,8 @@
 
 // #insight canonicalization needs to happen after analysis.
 
-// #todo find another name than canonicalization.
+// #todo find another name than canonicalization, how about `expand`, or `collapse` (to a single expression)?
+// #todo maybe canonicaliza is not that bad after all.
 
 // #insight
 // We expect one expression, in contexts like REPL or the Shell. If the input
@@ -15,7 +16,7 @@ use tan::expr::Expr;
 // #todo consider extracting as a helper, use in more places.
 // #todo find a more descriptive name.
 // #todo add unit-tests
-pub fn canonicalize_input(exprs: Vec<Expr>) -> Expr {
+pub fn canonicalize_exprs(exprs: Vec<Expr>) -> Expr {
     match exprs.len() {
         0 => Expr::None,
         1 => {

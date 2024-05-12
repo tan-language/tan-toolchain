@@ -9,7 +9,7 @@ use tan::{
     util::standard_names::{CURRENT_FILE_PATH, CURRENT_MODULE_PATH},
 };
 
-use crate::util::{canonicalize::canonicalize_input, report::report_errors};
+use crate::util::{canonicalize::canonicalize_exprs, report::report_errors};
 
 // #todo consider a different extensions, e.g. *.text
 // #todo consider saving history in tan (sexp) format.
@@ -97,7 +97,7 @@ pub fn handle_repl() -> anyhow::Result<()> {
                 };
 
                 // #todo pass the context also?
-                let expr = canonicalize_input(exprs);
+                let expr = canonicalize_exprs(exprs);
 
                 // let result = eval_string(&input, &mut context);
                 let result = eval(&expr, &mut context);
