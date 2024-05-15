@@ -70,6 +70,8 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
         panic!("error");
     };
 
+    let mut total_failure_count = 0;
+
     for (name, value) in module.scope.bindings.read().unwrap().iter() {
         // #insight #temp test-case methods start with test.
         if name.starts_with("test") {
@@ -93,6 +95,7 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
 
                 let failure_count = test_failures.write().unwrap().len();
                 if failure_count > 0 {
+                    total_failure_count += failure_count;
                     println!("{}", bold(red("FAIL")));
                     for failure in test_failures.read().unwrap().iter() {
                         println!(
@@ -113,6 +116,12 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
                 }
             }
         }
+    }
+
+    // #todo also keep passed and total statistics.
+
+    if total_failure_count > 0 {
+        println!("\nFailed: {total_failure_count}");
     }
 
     Ok(())
