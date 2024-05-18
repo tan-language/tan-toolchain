@@ -18,6 +18,9 @@ use crate::util::{
 
 // cargo r -- test tests/fixtures/test-fixture
 
+// #todo recursively scan for test files!
+// #todo add command-line option to disable recursive scan.
+
 // #todo add unit tests to verify error logging, etc.
 // #todo use a different name than test: spec, conformance, something else?
 // #todo *.test.tan files should be ignored on non-test-profile runs.
@@ -25,8 +28,20 @@ use crate::util::{
 
 // #todo reuse run cmd infrastructure.
 
+// #todo find better name.
+// #todo extract to tan-analysis
+// #todo how to ensure tests are not run multiple times with module interdependencies, will need some work.
+// #todo should return a tree? or at least have a version with a tree.
+#[allow(dead_code)]
+pub fn compute_module_paths(_path: impl AsRef<Path>) -> Vec<String> {
+    todo!()
+}
+
 pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = test_matches.get_one("PATH").unwrap();
+
+    // #todo recursively scan for directories/modules!
+    // #todo extract as helper function, in analysis.
 
     let path = Path::new(path);
 
