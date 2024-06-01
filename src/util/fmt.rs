@@ -4,9 +4,9 @@ use tan::error::{Error, ErrorNote, ErrorVariant};
 // #todo split into `format_expr`, `format_error`.
 // #todo add special support for formatting multiple errors?
 
-pub fn format_error_note_pretty(note: &ErrorNote, input: &str) -> String {
+pub fn format_error_note_pretty(note: &ErrorNote, input: &str, line_indent: &str) -> String {
     let Some(range) = &note.range else {
-        return note.text.to_string();
+        return format!("{line_indent}= note: {}", note.text);
     };
 
     // #insight
@@ -14,25 +14,24 @@ pub fn format_error_note_pretty(note: &ErrorNote, input: &str) -> String {
     // unwrap.
     let line_str = input.lines().nth(range.start.line).unwrap_or("???");
 
-    let line_space = " ".repeat(format!("{}", range.start.line + 1).len());
-
     let len = range.end.index - range.start.index;
 
     // #todo use `^` or `-` depending on note importance, like Rust.
 
     let indicator = "^".repeat(len);
 
-    let indicator_space = " ".repeat(range.start.col);
+    // The indent of the annotation indicator (arrow).
+    let indicator_indent = " ".repeat(range.start.col);
 
     // #todo trim the leading spaces from the line?
 
     format!(
         "{}|\n{}| {}\n{}|{} {} {}",
-        line_space,
+        line_indent,
         range.start.line + 1,
         line_str,
-        line_space,
-        indicator_space,
+        line_indent,
+        indicator_indent,
         indicator,
         note.text,
     )
@@ -73,12 +72,13 @@ pub fn format_error_pretty(error: &Error, input: &str) -> String {
     //     return format_panic_pretty(error);
     // }
 
+    // #todo find another name for main_note.
     // #todo potentially drinks errors.
-    let Some(note) = error.notes.first() else {
+    let Some(main_note) = error.notes.first() else {
         return format!("{}\n at {}", error.variant(), error.file_path);
     };
 
-    let prologue = if let Some(range) = &note.range {
+    let prologue = if let Some(range) = &main_note.range {
         let position = &range.start;
         format!(
             "{}\n at {}:{}:{}",
@@ -91,10 +91,20 @@ pub fn format_error_pretty(error: &Error, input: &str) -> String {
         format!("{}\n at {}", error.variant(), error.file_path)
     };
 
+    // compute notes indent.
+    let indent = error
+        .notes
+        .iter()
+        .filter(|n| n.range.is_some())
+        .fold(0usize, |acc, n| {
+            n.range.as_ref().unwrap().start.line.max(acc)
+        });
+    let indent = " ".repeat(format!("{}", indent + 1).len());
+
     let notes: Vec<String> = error
         .notes
         .iter()
-        .map(|note| format_error_note_pretty(note, input))
+        .map(|note| format_error_note_pretty(note, input, &indent))
         .collect();
 
     // #todo special handling of errors!
