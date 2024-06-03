@@ -1,4 +1,5 @@
 use std::{
+    collections::HashSet,
     path::Path,
     sync::{Arc, RwLock},
 };
@@ -36,7 +37,19 @@ use crate::util::{
 #[allow(dead_code)]
 pub fn compute_module_paths(path: impl AsRef<Path>) -> Result<Vec<String>, std::io::Error> {
     let predicate = |p: &str| (!p.contains("/.git/")) && p.ends_with(".test.tan");
-    filter_walk_dir(path.as_ref(), &predicate)
+    let paths = filter_walk_dir(path.as_ref(), &predicate)?;
+    let mut path_set: HashSet<String> = HashSet::new();
+    for path in paths {
+        path_set.insert(
+            Path::new(&path)
+                .parent()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .to_string(),
+        );
+    }
+    Ok(path_set.into_iter().collect())
 }
 
 fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
@@ -139,7 +152,7 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     // #todo recursively scan for directories/modules!
     // #todo extract as helper function, in analysis.
 
-    // let paths = compute_module_paths(path);
+    let paths = compute_module_paths(path)?;
     // dbg!(&paths.unwrap());
 
     // let path = Path::new(path);
@@ -234,8 +247,12 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let mut total_failure_count = 0;
 
-    let failure_count = evaluate_test_module(path)?;
-    total_failure_count += failure_count;
+    // #todo build set of module dirs!
+
+    for path in paths {
+        let failure_count = evaluate_test_module(&path)?;
+        total_failure_count += failure_count;
+    }
 
     // #todo also keep passed and total statistics.
 
