@@ -1,4 +1,5 @@
 use std::{
+    collections::HashSet,
     path::Path,
     sync::{Arc, RwLock},
 };
@@ -13,10 +14,21 @@ use tan::{
 
 use crate::util::{
     ansi::{bold, green, red},
+    fs::filter_walk_dir,
     report::report_errors,
 };
 
 // cargo r -- test tests/fixtures/test-fixture
+
+// #todo
+// Better report the results:
+//
+// test /path/to/test
+// - test-one OK
+// - test-another OK
+// test /path/to/another/test
+// - test-function OK
+// ...
 
 // #todo recursively scan for test files!
 // #todo add command-line option to disable recursive scan.
@@ -33,16 +45,24 @@ use crate::util::{
 // #todo how to ensure tests are not run multiple times with module interdependencies, will need some work.
 // #todo should return a tree? or at least have a version with a tree.
 #[allow(dead_code)]
-pub fn compute_module_paths(_path: impl AsRef<Path>) -> Vec<String> {
-    todo!()
+pub fn compute_module_paths(path: impl AsRef<Path>) -> Result<Vec<String>, std::io::Error> {
+    let predicate = |p: &str| (!p.contains("/.git/")) && p.ends_with(".test.tan");
+    let paths = filter_walk_dir(path.as_ref(), &predicate)?;
+    let mut path_set: HashSet<String> = HashSet::new();
+    for path in paths {
+        path_set.insert(
+            Path::new(&path)
+                .parent()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .to_string(),
+        );
+    }
+    Ok(path_set.into_iter().collect())
 }
 
-pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
-    let path: &String = test_matches.get_one("PATH").unwrap();
-
-    // #todo recursively scan for directories/modules!
-    // #todo extract as helper function, in analysis.
-
+fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
     let path = Path::new(path);
 
     // #todo handle general URLs, not only file://
@@ -76,7 +96,7 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     if let Err(errors) = result {
         report_errors(&errors, None);
         // #todo flag the error here
-        return Ok(());
+        return Ok(0);
     };
 
     let expr = result.unwrap();
@@ -105,7 +125,7 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
                 if let Err(error) = result {
                     report_errors(&[error], None);
                     // #todo flag the error here
-                    return Ok(());
+                    return Ok(0);
                 };
 
                 let failure_count = test_failures.write().unwrap().len();
@@ -131,6 +151,22 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
                 }
             }
         }
+    }
+
+    Ok(total_failure_count)
+}
+
+pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
+    let path: &String = test_matches.get_one("PATH").unwrap();
+
+    // #todo extract as helper function, in analysis.
+    let paths = compute_module_paths(path)?;
+
+    let mut total_failure_count = 0;
+
+    for path in paths {
+        let failure_count = evaluate_test_module(&path)?;
+        total_failure_count += failure_count;
     }
 
     // #todo also keep passed and total statistics.
