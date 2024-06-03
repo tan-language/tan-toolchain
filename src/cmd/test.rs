@@ -20,6 +20,16 @@ use crate::util::{
 
 // cargo r -- test tests/fixtures/test-fixture
 
+// #todo
+// Better report the results:
+//
+// test /path/to/test
+// - test-one OK
+// - test-another OK
+// test /path/to/another/test
+// - test-function OK
+// ...
+
 // #todo recursively scan for test files!
 // #todo add command-line option to disable recursive scan.
 
