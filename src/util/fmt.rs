@@ -132,22 +132,25 @@ pub fn format_panic_pretty(error: &Error) -> String {
     // #todo cleanup.
 
     let ErrorVariant::Panic(ref msg) = error.variant else {
-        // should never happen.
-        panic!("we need to go deeper");
+        unreachable!();
     };
 
     let Some(note) = error.notes.first() else {
-        // should never happen.
-        panic!("we need to go deeper");
+        unreachable!();
     };
 
-    let range = note.range.as_ref().unwrap();
+    // #todo #fix Panics should always have range, investigate what's happening!
 
-    format!(
-        "{}\n at {}:{}:{}",
-        msg,
-        error.file_path,
-        range.start.line + 1,
-        range.start.col + 1
-    )
+    if let Some(range) = note.range.as_ref() {
+        format!(
+            "{}\n at {}:{}:{}",
+            msg,
+            error.file_path,
+            range.start.line + 1,
+            range.start.col + 1
+        )
+    } else {
+        // #fix should never happen!
+        format!("{}\n at {}", msg, error.file_path)
+    }
 }
