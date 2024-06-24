@@ -891,7 +891,7 @@ dependencies = [
 
 [[package]]
 name = "tan"
-version = "0.14.0"
+version = "0.15.0"
 dependencies = [
  "chrono",
  "libloading",
@@ -907,7 +907,7 @@ dependencies = [
 
 [[package]]
 name = "tan-formatting"
-version = "0.14.0"
+version = "0.15.0"
 dependencies = [
  "regex",
  "tan",
@@ -915,7 +915,7 @@ dependencies = [
 
 [[package]]
 name = "tan-lints"
-version = "0.14.0"
+version = "0.15.0"
 dependencies = [
  "lsp-types",
  "tan",
@@ -923,7 +923,7 @@ dependencies = [
 
 [[package]]
 name = "tan-toolchain"
-version = "0.14.0"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "clap",
