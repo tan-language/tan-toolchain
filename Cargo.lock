@@ -906,11 +906,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "tan-analysis"
+version = "0.15.0"
+dependencies = [
+ "tan",
+]
+
+[[package]]
 name = "tan-formatting"
 version = "0.15.0"
 dependencies = [
  "regex",
  "tan",
+ "tan-analysis",
 ]
 
 [[package]]
@@ -929,6 +937,7 @@ dependencies = [
  "clap",
  "rustyline",
  "tan",
+ "tan-analysis",
  "tan-formatting",
  "tan-lints",
  "tracing",

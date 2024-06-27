@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use tan::api::parse_string_all;
+use tan_analysis::parsing::parse_string_for_analysis;
 use tan_lints::{compute_diagnostics, Diagnostic, DiagnosticSeverity};
 
 fn format_diagnostic(diagnostic: &Diagnostic) -> String {
@@ -21,7 +21,7 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> anyhow::Result<()> {
         .expect("missing path to program file");
 
     let input = std::fs::read_to_string(path)?;
-    let parse_result = parse_string_all(input);
+    let parse_result = parse_string_for_analysis(input);
     let diagnostics = compute_diagnostics(&parse_result);
 
     for diagnostic in diagnostics {

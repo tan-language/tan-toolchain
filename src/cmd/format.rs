@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use tan::api::parse_string_all;
+use tan_analysis::parsing::parse_string_for_analysis;
 use tan_formatting::pretty::Formatter;
 
 pub fn handle_format(format_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -9,7 +9,7 @@ pub fn handle_format(format_matches: &ArgMatches) -> anyhow::Result<()> {
 
     let input = std::fs::read_to_string(path)?;
 
-    let Ok(exprs) = parse_string_all(input) else {
+    let Ok(exprs) = parse_string_for_analysis(input) else {
         return Err(anyhow::anyhow!("cannot parse the file"));
     };
 
