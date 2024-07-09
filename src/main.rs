@@ -6,6 +6,7 @@ use std::ffi::OsString;
 use clap::{Arg, ArgAction, Command};
 use tracing_subscriber::util::SubscriberInitExt;
 
+use cmd::deps::handle_deps;
 use cmd::format::handle_format;
 use cmd::lint::handle_lint;
 use cmd::repl::handle_repl;
@@ -40,6 +41,16 @@ fn main() -> anyhow::Result<()> {
                 .help("Extra arguments to pass to the program")
                 .action(ArgAction::Append)
                 .last(true), // #todo consider .trailing_var_arg(true)
+        );
+
+    // #todo This is a temp name.
+    // #todo Consider other names, like `crate`, `package`, `pm`, or even `cargo`.
+    let deps_cmd = Command::new("deps")
+        .about("Dependency management")
+        .subcommand(
+            Command::new("install")
+                .about("Install the dependencies")
+                .alias("i"),
         );
 
     let lint_cmd = Command::new("lint").about("Lint a Tan text file").arg(
@@ -79,6 +90,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(run_cmd)
         .subcommand(lint_cmd)
         .subcommand(format_cmd)
+        .subcommand(deps_cmd)
         .subcommand(test_cmd);
 
     let matches = tan_cmd.get_matches();
@@ -88,6 +100,7 @@ fn main() -> anyhow::Result<()> {
             "run" => handle_run(subcommand_matches)?,
             "lint" => handle_lint(subcommand_matches)?,
             "format" => handle_format(subcommand_matches)?,
+            "deps" => handle_deps(subcommand_matches)?,
             "test" => handle_test(subcommand_matches)?,
             _ => {
                 // #todo extract this as a function.
