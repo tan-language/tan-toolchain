@@ -9,7 +9,7 @@ use tan::{
     context::Context,
     eval::{invoke_func, util::eval_module},
     expr::{format_value, Expr},
-    util::standard_names::{CURRENT_FILE_PATH, PROFILE},
+    util::standard_names::PROFILE,
 };
 
 use crate::util::{
@@ -78,9 +78,8 @@ fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
         .dynamic_scope
         .insert("*test-failures*", Expr::Array(test_failures.clone()));
 
-    // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
-
     // #insight don't set CURRENT_MODULE_PATH, it will be set in eval_module.
+    // #insight don't set CURRENT_FILE_PATH, it will be set in eval_module and invoke_func.
 
     // let current_dir = std::env::current_dir()?.display().to_string();
     // context
@@ -115,10 +114,14 @@ fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
                 print!("test `{name}` in `{file_path}` ");
 
                 // #todo No need for manual current-file-path handling, put in scope!
-                let old_current_file_path = context.top_scope.get(CURRENT_FILE_PATH);
-                context
-                    .top_scope
-                    .insert(CURRENT_FILE_PATH, Expr::string(file_path));
+                // let old_current_file_path = context.top_scope.get(CURRENT_FILE_PATH);
+                // context
+                //     .top_scope
+                //     .insert(CURRENT_FILE_PATH, Expr::string(file_path));
+                // #insight No need to maintain a stack.
+                // context
+                //     .scope
+                //     .insert(CURRENT_FILE_PATH, Expr::string(file_path));
 
                 // #todo will need to pass arguments by ref.
                 let result = invoke_func(value, Vec::new(), &mut context);
@@ -145,12 +148,13 @@ fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
                     println!("{}", green("OK"));
                 }
 
-                if let Some(old_current_file_path) = old_current_file_path {
-                    // #insight we should revert the previous current file, in case of 'use'
-                    context
-                        .top_scope
-                        .insert(CURRENT_FILE_PATH, old_current_file_path.unpack().clone());
-                }
+                // #insight No need to maintain a stack.
+                // if let Some(old_current_file_path) = old_current_file_path {
+                //     // #insight we should revert the previous current file, in case of 'use'
+                //     context
+                //         .top_scope
+                //         .insert(CURRENT_FILE_PATH, old_current_file_path.unpack().clone());
+                // }
             }
         }
     }
