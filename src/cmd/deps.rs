@@ -20,6 +20,8 @@
 // tan deps list
 // tan deps tidy
 
+// #todo This needs to resolve transitive dependencies!
+
 use clap::ArgMatches;
 
 pub fn handle_deps(deps_matches: &ArgMatches) -> anyhow::Result<()> {

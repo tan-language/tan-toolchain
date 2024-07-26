@@ -114,6 +114,7 @@ fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
                 test_failures.write().unwrap().clear();
                 print!("test `{name}` in `{file_path}` ");
 
+                // #todo No need for manual current-file-path handling, put in scope!
                 let old_current_file_path = context.top_scope.get(CURRENT_FILE_PATH);
                 context
                     .top_scope
@@ -125,6 +126,7 @@ fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
                 if let Err(error) = result {
                     report_errors(&[error], None);
                     // #todo flag the error here
+                    println!("{}", bold(red("FAIL")));
                     return Ok(0);
                 };
 
