@@ -5,6 +5,7 @@ use std::{
 };
 
 use clap::ArgMatches;
+use glob::Pattern;
 use tan::{
     context::Context,
     eval::{invoke_func, util::eval_module},
@@ -40,16 +41,29 @@ use crate::util::{
 
 // #todo reuse run cmd infrastructure.
 
+// #todo Consider using the `glob` crate to implement the fs walk.
+
 // #todo find better name.
 // #todo extract to tan-analysis
 // #todo how to ensure tests are not run multiple times with module interdependencies, will need some work.
 // #todo should return a tree? or at least have a version with a tree.
 #[allow(dead_code)]
-pub fn compute_module_paths(path: impl AsRef<Path>) -> Result<Vec<String>, std::io::Error> {
+pub fn compute_module_paths(
+    base_path: impl AsRef<Path>,
+    file_pattern: &Option<Pattern>,
+) -> Result<Vec<String>, std::io::Error> {
     let predicate = |p: &str| (!p.contains("/.git/")) && p.ends_with(".test.tan");
-    let paths = filter_walk_dir(path.as_ref(), &predicate)?;
+
+    // #todo Rename path to base_path or something.
+    let paths = filter_walk_dir(base_path.as_ref(), &predicate)?;
     let mut path_set: HashSet<String> = HashSet::new();
     for path in paths {
+        if let Some(pattern) = file_pattern {
+            if !pattern.matches(&path) {
+                continue;
+            }
+        }
+        // #insight Computes the unique modules (directories), also reads non-test files.
         path_set.insert(
             Path::new(&path)
                 .parent()
@@ -62,7 +76,7 @@ pub fn compute_module_paths(path: impl AsRef<Path>) -> Result<Vec<String>, std::
     Ok(path_set.into_iter().collect())
 }
 
-fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
+fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::Result<usize> {
     let path = Path::new(path);
 
     // #todo handle general URLs, not only file://
@@ -110,6 +124,12 @@ fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
         // #insight #temp test-case methods start with test.
         if name.starts_with("test") {
             if let Expr::Func(_, _, _, file_path) = value.unpack() {
+                if let Some(pattern) = file_pattern {
+                    if !pattern.matches(file_path) {
+                        continue;
+                    }
+                }
+
                 test_failures.write().unwrap().clear();
                 print!("test `{name}` in `{file_path}` ");
 
@@ -164,14 +184,19 @@ fn evaluate_test_module(path: &str) -> anyhow::Result<usize> {
 
 pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     let path: &String = test_matches.get_one("PATH").unwrap();
+    let file_glob: Option<&String> = test_matches.get_one("FILE");
 
-    // #todo extract as helper function, in analysis.
-    let paths = compute_module_paths(path)?;
+    // #todo Make sure the file_glob starts with the path.
+    let file_pattern =
+        file_glob.map(|glob| glob::Pattern::new(glob).expect("file glob pattern is valid"));
+
+    // #todo Extract as helper function, in analysis.
+    let paths = compute_module_paths(path, &file_pattern)?;
 
     let mut total_failure_count = 0;
 
     for path in paths {
-        let failure_count = evaluate_test_module(&path)?;
+        let failure_count = evaluate_test_module(&path, &file_pattern)?;
         total_failure_count += failure_count;
     }
 

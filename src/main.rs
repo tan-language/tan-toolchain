@@ -79,6 +79,23 @@ fn main() -> anyhow::Result<()> {
                 .help("The base path for the tests")
                 .default_value("."), // if the path is missing default to the current directory
         )
+        .arg(
+            Arg::new("FILE")
+                .help("Filter the test files")
+                // .short("f")
+                .long("file")
+                .required(false)
+                .action(ArgAction::Set),
+        )
+        // #todo Not implemented yet.
+        .arg(
+            Arg::new("FUNCTION")
+                .help("Filter the test functions")
+                // .short("f")
+                .long("function")
+                .required(false)
+                .action(ArgAction::Set),
+        )
         .alias("t");
 
     let tan_cmd = Command::new("tan")

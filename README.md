@@ -27,6 +27,12 @@ tan r module-dir
 tan format file # shorter: tan fmt file
 ```
 
+```sh
+tan tet
+tan t
+tan test --file "**/lang/float*"
+```
+
 ## Status
 
 This is an _experimental_ project, not intended for production use.
