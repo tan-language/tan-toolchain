@@ -43,6 +43,16 @@ use crate::util::{
 
 // #todo Consider using the `glob` crate to implement the fs walk.
 
+// #todo Find a better name
+#[derive(Default)]
+struct TestStats {
+    test_count: usize,
+    // #todo Not used yet!
+    // assertion_count: usize,
+    failed_test_count: usize,
+    failed_assertion_count: usize,
+}
+
 // #todo find better name.
 // #todo extract to tan-analysis
 // #todo how to ensure tests are not run multiple times with module interdependencies, will need some work.
@@ -76,7 +86,7 @@ pub fn compute_module_paths(
     Ok(path_set.into_iter().collect())
 }
 
-fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::Result<usize> {
+fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::Result<TestStats> {
     let path = Path::new(path);
 
     // #todo handle general URLs, not only file://
@@ -86,7 +96,12 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
 
     let mut context = Context::new();
 
+    let mut test_stats = TestStats::default();
+
     let test_failures: Arc<RwLock<Vec<Expr>>> = Arc::new(RwLock::new(Vec::new()));
+
+    // #todo Not used yet.
+    // context.dynamic_scope.insert("*test-count*", Expr::Int(0));
 
     context
         .dynamic_scope
@@ -104,12 +119,12 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
     // #todo add custom helper method to context to setup '!special!' values.
     context.top_scope.insert(PROFILE, Expr::string("test"));
 
-    let result = eval_module(path, &mut context, false);
+    let result = eval_module(&path, &mut context, false);
 
     if let Err(errors) = result {
         report_errors(&errors, None);
         // #todo flag the error here
-        return Ok(0);
+        return Ok(test_stats);
     };
 
     let expr = result.unwrap();
@@ -118,7 +133,7 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
         panic!("error");
     };
 
-    let mut total_failure_count = 0;
+    // let mut total_failure_count = 0;
 
     for (name, value) in module.scope.bindings.read().unwrap().iter() {
         // #insight #temp test-case methods start with test.
@@ -132,6 +147,8 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
 
                 test_failures.write().unwrap().clear();
                 print!("test `{name}` in `{file_path}` ");
+
+                test_stats.test_count += 1;
 
                 // #todo No need for manual current-file-path handling, put in scope!
                 // let old_current_file_path = context.top_scope.get(CURRENT_FILE_PATH);
@@ -150,20 +167,21 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
                     report_errors(&[error], None);
                     // #todo flag the error here
                     println!("{}", bold(red("FAIL")));
-                    return Ok(0);
+                    return Ok(test_stats);
                 };
 
                 let failure_count = test_failures.write().unwrap().len();
                 if failure_count > 0 {
-                    total_failure_count += failure_count;
+                    test_stats.failed_assertion_count += failure_count;
                     println!("{}", bold(red("FAIL")));
                     for failure in test_failures.read().unwrap().iter() {
                         println!(
                             "{} {}",
-                            bold(red("assertion failed:")),
+                            bold(red("Assertion failed:")),
                             format_value(failure)
                         );
                     }
+                    test_stats.failed_test_count += 1;
                 } else {
                     println!("{}", green("OK"));
                 }
@@ -179,7 +197,7 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
         }
     }
 
-    Ok(total_failure_count)
+    Ok(test_stats)
 }
 
 pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -193,17 +211,31 @@ pub fn handle_test(test_matches: &ArgMatches) -> anyhow::Result<()> {
     // #todo Extract as helper function, in analysis.
     let paths = compute_module_paths(path, &file_pattern)?;
 
-    let mut total_failure_count = 0;
+    let mut total_test_count = 0;
+    let mut total_failed_test_count = 0;
+    let mut total_failed_assertion_count = 0;
 
     for path in paths {
-        let failure_count = evaluate_test_module(&path, &file_pattern)?;
-        total_failure_count += failure_count;
+        let test_stats = evaluate_test_module(&path, &file_pattern)?;
+        total_test_count += test_stats.test_count;
+        total_failed_test_count += test_stats.failed_test_count;
+        total_failed_assertion_count += test_stats.failed_assertion_count;
     }
 
     // #todo also keep passed and total statistics.
 
-    if total_failure_count > 0 {
-        println!("\nFailed: {total_failure_count}");
+    println!("\n---");
+    println!(
+        "Tests: {} total, {} passed.",
+        total_test_count,
+        total_test_count - total_failed_test_count
+    );
+
+    if total_failed_assertion_count > 0 {
+        println!(
+            "Assertions: {}",
+            bold(red(format!("{total_failed_assertion_count} failed."))),
+        );
     }
 
     Ok(())

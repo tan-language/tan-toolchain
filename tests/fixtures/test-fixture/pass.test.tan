@@ -1,4 +1,6 @@
 ; #todo consider automatically importing `testing` for tests.
-(use [assert-eq] testing)
+; (use [assert-eq] testing)
 
-(assert-eq 1 1)
+(let test-pass (Func []
+    (assert-eq 1 1)
+))
