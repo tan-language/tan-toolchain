@@ -30,7 +30,7 @@ tan format file # shorter: tan fmt file
 ```sh
 tan tet
 tan t
-tan test --file "**/lang/float*"
+tan test --file "**/float*"
 ```
 
 ## Status
