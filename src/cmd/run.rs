@@ -3,7 +3,7 @@ use std::{path::Path, sync::Arc};
 use clap::ArgMatches;
 use tan::{context::Context, eval::util::eval_module, expr::Expr};
 
-use crate::util::report::report_errors;
+use crate::util::{prelude::import_prelude, report::report_errors};
 
 /// Read and evaluate a Tan program file.
 pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
@@ -27,6 +27,8 @@ pub fn handle_run(run_matches: &ArgMatches) -> anyhow::Result<()> {
     let path = format!("file://{}", path.to_string_lossy());
 
     let mut context = Context::new();
+
+    import_prelude(&mut context);
 
     // #todo setup CURRENT_MODULE_PATH, CURRENT_FILE_PATH?
     // #todo setup PROFILE

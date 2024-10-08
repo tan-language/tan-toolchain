@@ -9,7 +9,9 @@ use tan::{
     util::standard_names::{CURRENT_FILE_PATH, CURRENT_MODULE_PATH},
 };
 
-use crate::util::{canonicalize::canonicalize_exprs, report::report_errors};
+use crate::util::{
+    canonicalize::canonicalize_exprs, prelude::import_prelude, report::report_errors,
+};
 
 // #todo consider a different extensions, e.g. *.text
 // #todo consider saving history in tan (sexp) format.
@@ -53,6 +55,8 @@ pub fn handle_repl() -> anyhow::Result<()> {
     println!("Tan, press CTRL-D to exit.");
 
     let mut context = Context::new();
+
+    import_prelude(&mut context);
 
     // Initialize some global variables.
 
