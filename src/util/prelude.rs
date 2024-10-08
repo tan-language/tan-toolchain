@@ -1,6 +1,7 @@
 // #todo Move to other crate.
 
-use tan::{context::Context, library::setup_lib};
+use tan::context::Context;
+use tancore::setup_lib;
 
 // #todo Find a better name for this function.
 pub fn import_prelude(context: &mut Context) {
