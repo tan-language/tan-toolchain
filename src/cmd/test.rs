@@ -16,6 +16,7 @@ use tan::{
 use crate::util::{
     ansi::{bold, green, red},
     fs::filter_walk_dir,
+    prelude::import_prelude,
     report::report_errors,
 };
 
@@ -96,6 +97,8 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
 
     let mut context = Context::new();
 
+    import_prelude(&mut context);
+
     let mut test_stats = TestStats::default();
 
     let test_failures: Arc<RwLock<Vec<Expr>>> = Arc::new(RwLock::new(Vec::new()));
@@ -119,7 +122,10 @@ fn evaluate_test_module(path: &str, file_pattern: &Option<Pattern>) -> anyhow::R
     // #todo add custom helper method to context to setup '!special!' values.
     context.top_scope.insert(PROFILE, Expr::string("test"));
 
-    let result = eval_module(&path, &mut context, false);
+    // #insight Pass force=true to eval_mode, to make sure we also eval test files
+    // of pre-imported modules.
+    // #question: Where else is force=true used?
+    let result = eval_module(&path, &mut context, true);
 
     if let Err(errors) = result {
         report_errors(&errors, None);
